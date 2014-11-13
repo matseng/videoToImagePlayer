@@ -1,7 +1,12 @@
 
 var rawTextData = xmlFileLoader("http://localhost:8000/data/base64SingleImage");
 
-console.log(rawTextData);
+var t = "data:image/png;base64," + rawTextData;
+
+var img = document.createElement('img');
+img.src = t;
+document.body.appendChild(img);
+
 
 // if (this.readyState == 4 || w.length - k < L * 1.2) {
 //     if (k > E + 5) {
