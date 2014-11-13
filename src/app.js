@@ -27,19 +27,25 @@ function playImages(imgArr, fps) {
 };
 
 var LENGTH;
+var PAUSED;
+var INDEX = 0;
 function playImages2(imgArr, fps) {
-  appendImage(imgArr[0]);
+  if( !document.getElementById('imageFromVideo')) appendImage(imgArr[INDEX]);
   var imageEl = document.getElementById('imageFromVideo');
   var src;
-  function render(i) {
-    if (LENGTH && i == LENGTH) return;
-    // if i === imgArr.length then need to wait for more images to load
+  function render() {
+    if (LENGTH && INDEX == LENGTH) return;
+    if (INDEX === imgArr.length) {
+      PAUSED = true;
+      return;
+    }
     setTimeout(function() {
-      window.requestAnimationFrame(render.bind(this, i + 1));
+      INDEX++;
+      window.requestAnimationFrame(render);
     }, 1000 / fps);
-    imageEl.src = "data:image/png;base64," + imgArr[i];
+    imageEl.src = "data:image/png;base64," + imgArr[INDEX];
   };
-  render(1);
+  render();
   console.log(imgArr.length);
 };
 
@@ -79,7 +85,8 @@ function updateProgress (oEvent) {
     Array.prototype.push.apply(imgArr2, partialArr)
     start = end;
     console.log(chunkIndex);
-    if(chunkIndex === 0 ) {
+    if(chunkIndex === 0 || PAUSED) {
+      PAUSED = false;
       playImages2(imgArr2, 30);
     }
     chunkIndex++;
@@ -102,7 +109,7 @@ xhr.onload = function() {
     if(xhr.status === 200) {
       // console.log(xhr.responseText.length);
 // appendImage(imgArr[0]);
-      LENGTH = xhr.responseText.length;
+      LENGTH = imgArr2.length;
     }
   }
 }
