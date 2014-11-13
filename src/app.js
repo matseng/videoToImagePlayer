@@ -1,6 +1,6 @@
 
 // var rawTextData = xmlFileLoader("http://localhost:8000/data/base64SingleImage");
-var rawTextData = xmlFileLoader("http://localhost:8000/data/base64Images");
+var rawTextData = xmlFileLoader("./data/base64Images");
 var imgArr = rawTextData.split('\n').filter(function(val) {
   return val !=+ "";
 });
