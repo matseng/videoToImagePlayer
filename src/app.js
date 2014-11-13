@@ -11,8 +11,14 @@ function toImageArray(rawTextData) {
   )
 };
 
+var LENGTH;
+var PAUSED;
+var INDEX = 0;
+var TIMER_START;
+
 function playImages(imgArr, fps) {
   appendImage(imgArr[0]);
+  if(window.performance) console.log(window.performance.now() - TIMER_START);
   var imageEl = document.getElementById('imageFromVideo');
   var src;
   function render(i) {
@@ -23,14 +29,11 @@ function playImages(imgArr, fps) {
     imageEl.src = "data:image/png;base64," + imgArr[i];
   };
   render(1);
-  console.log(imgArr.length);
 };
 
-var LENGTH;
-var PAUSED;
-var INDEX = 0;
 function playImages2(imgArr, fps) {
   if( !document.getElementById('imageFromVideo')) appendImage(imgArr[INDEX]);
+  if(window.performance) console.log(window.performance.now() - TIMER_START);
   var imageEl = document.getElementById('imageFromVideo');
   var src;
   function render() {
@@ -66,7 +69,6 @@ xhr.open('GET', octetStreamURL, true);
 xhr.addEventListener('progress', updateProgress, false);
 
 
-
 // progress on transfers from the server to the client (downloads)
 var imgArr2 = [""];
 var start = 0;
@@ -84,31 +86,19 @@ function updateProgress (oEvent) {
     imgArr2.pop();
     Array.prototype.push.apply(imgArr2, partialArr)
     start = end;
-    console.log(chunkIndex);
     if(chunkIndex === 0 || PAUSED) {
       PAUSED = false;
       playImages2(imgArr2, 30);
     }
     chunkIndex++;
     console.log(chunkIndex);
-    // console.log(xhr.responseText.length);
-    // tempStr =  xhr.responseText.substring(start, end);
-    // console.log(tempStr.length);
-    // sum += tempStr.length;
-    // start = end;
-
-  } else {
-    console.log("Error with progress event");
-    // Unable to compute progress information since the total size is unknown
   }
-  console.log(imgArr2.length);
 };
 
 xhr.onload = function() {
   if(xhr.readyState === 4) {
     if(xhr.status === 200) {
-      // console.log(xhr.responseText.length);
-// appendImage(imgArr[0]);
+      // playImages(toImageArray(xhr.responseText), 30);
       LENGTH = imgArr2.length;
     }
   }
@@ -117,6 +107,7 @@ xhr.onerror = function(e) {
   console.err(xhr.statusText);
 };
 xhr.send();
+if (window.performance) TIMER_START = window.performance.now();
 
 
 // if (this.readyState == 4 || w.length - k < L * 1.2) {
