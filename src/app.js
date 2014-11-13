@@ -26,6 +26,23 @@ function playImages(imgArr, fps) {
   console.log(imgArr.length);
 };
 
+var LENGTH;
+function playImages2(imgArr, fps) {
+  appendImage(imgArr[0]);
+  var imageEl = document.getElementById('imageFromVideo');
+  var src;
+  function render(i) {
+    if (LENGTH && i == LENGTH) return;
+    // if i === imgArr.length then need to wait for more images to load
+    setTimeout(function() {
+      window.requestAnimationFrame(render.bind(this, i + 1));
+    }, 1000 / fps);
+    imageEl.src = "data:image/png;base64," + imgArr[i];
+  };
+  render(1);
+  console.log(imgArr.length);
+};
+
 function appendImage(imgString) {
   var t = "data:image/png;base64," + imgString;
   var img = document.createElement('img');
@@ -63,9 +80,10 @@ function updateProgress (oEvent) {
     start = end;
     console.log(chunkIndex);
     if(chunkIndex === 0 ) {
-
+      playImages2(imgArr2, 30);
     }
     chunkIndex++;
+    console.log(chunkIndex);
     // console.log(xhr.responseText.length);
     // tempStr =  xhr.responseText.substring(start, end);
     // console.log(tempStr.length);
@@ -84,8 +102,7 @@ xhr.onload = function() {
     if(xhr.status === 200) {
       // console.log(xhr.responseText.length);
 // appendImage(imgArr[0]);
-
-      playImages(imgArr2, 30);
+      LENGTH = xhr.responseText.length;
     }
   }
 }
