@@ -1,9 +1,15 @@
 
 // var rawTextData = xmlFileLoader("http://localhost:8000/data/base64SingleImage");
 var rawTextData = xmlFileLoader("./data/base64Images");
-var imgArr = rawTextData.split('\n').filter(function(val) {
-  return val !=+ "";
-});
+var imgArr = toImageArray(rawTextData);
+
+function toImageArray(rawTextData) {
+  return rawTextData.split('\n')
+    .filter(function(val) {
+      return val !=+ "";
+    }
+  )
+};
 
 function playImages(imgArr, i, fps) {
   var imageEl = document.getElementById('imageFromVideo');
@@ -16,6 +22,7 @@ function playImages(imgArr, i, fps) {
     imageEl.src = "data:image/png;base64," + imgArr[i];
   };
   render(imgArr, i);
+  console.log(imgArr.length);
 };
 
 function appendImage(imgString) {
@@ -27,7 +34,58 @@ function appendImage(imgString) {
 };
 
 appendImage(imgArr[0]);
-playImages(imgArr, 1, 30);
+// playImages(imgArr, 1, 30);
+
+var octetStreamURL = "http://m.lkqd.net/media?format=img&domain=lkqd.net&adId=1&adSystem=LKQD&vrs=3&width=690&height=460&fr=27&iq=24&url=http%3A%2F%2Fad.lkqd.net%2Fserve%2Fqa.mp4";
+
+var xhr = new XMLHttpRequest();
+xhr.open('GET', octetStreamURL, true);
+xhr.addEventListener('progress', updateProgress, false);
+
+
+
+// progress on transfers from the server to the client (downloads)
+var imgArr2 = [];
+var start = 0;
+var end;
+var partial;
+var partialArr;
+
+var tempStr = "";
+var sum = 0;
+function updateProgress (oEvent) {
+  if (oEvent.type) {
+    end = xhr.responseText.length;
+    partialArr = toImageArray(imgArr2[imgArr2.length - 1] + xhr.responseText.substring(start, end));
+    imgArr2.pop();
+    Array.prototype.push.apply(imgArr2, partialArr)
+    start = end;
+    // console.log(xhr.responseText.length);
+    // tempStr =  xhr.responseText.substring(start, end);
+    // console.log(tempStr.length);
+    // sum += tempStr.length;
+    // start = end;
+
+  } else {
+    console.log("Error with progress event");
+    // Unable to compute progress information since the total size is unknown
+  }
+  console.log(imgArr2.length);
+};
+
+xhr.onload = function() {
+  if(xhr.readyState === 4) {
+    if(xhr.status === 200) {
+      // console.log(xhr.responseText.length);
+      playImages(imgArr2, 1, 30);
+    }
+  }
+}
+xhr.onerror = function(e) {
+  console.err(xhr.statusText);
+};
+xhr.send();
+
 
 // if (this.readyState == 4 || w.length - k < L * 1.2) {
 //     if (k > E + 5) {
