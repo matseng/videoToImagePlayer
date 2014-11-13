@@ -11,17 +11,18 @@ function toImageArray(rawTextData) {
   )
 };
 
-function playImages(imgArr, i, fps) {
+function playImages(imgArr, fps) {
+  appendImage(imgArr[0]);
   var imageEl = document.getElementById('imageFromVideo');
   var src;
-  function render(imgArr, i) {
+  function render(i) {
     if (i == imgArr.length) return;
     setTimeout(function() {
-      window.requestAnimationFrame(render.bind(this, imgArr, i + 1));
+      window.requestAnimationFrame(render.bind(this, i + 1));
     }, 1000 / fps);
     imageEl.src = "data:image/png;base64," + imgArr[i];
   };
-  render(imgArr, i);
+  render(1);
   console.log(imgArr.length);
 };
 
@@ -33,8 +34,7 @@ function appendImage(imgString) {
   document.body.appendChild(img);
 };
 
-appendImage(imgArr[0]);
-// playImages(imgArr, 1, 30);
+// playImages(imgArr, 30);
 
 var octetStreamURL = "http://m.lkqd.net/media?format=img&domain=lkqd.net&adId=1&adSystem=LKQD&vrs=3&width=690&height=460&fr=27&iq=24&url=http%3A%2F%2Fad.lkqd.net%2Fserve%2Fqa.mp4";
 
@@ -45,21 +45,27 @@ xhr.addEventListener('progress', updateProgress, false);
 
 
 // progress on transfers from the server to the client (downloads)
-var imgArr2 = [];
+var imgArr2 = [""];
 var start = 0;
 var end;
 var partial;
 var partialArr;
+var chunkIndex = 0;
 
 var tempStr = "";
 var sum = 0;
 function updateProgress (oEvent) {
-  if (oEvent.type) {
+  if (oEvent.type && xhr.responseText.length) {
     end = xhr.responseText.length;
     partialArr = toImageArray(imgArr2[imgArr2.length - 1] + xhr.responseText.substring(start, end));
     imgArr2.pop();
     Array.prototype.push.apply(imgArr2, partialArr)
     start = end;
+    console.log(chunkIndex);
+    if(chunkIndex === 0 ) {
+
+    }
+    chunkIndex++;
     // console.log(xhr.responseText.length);
     // tempStr =  xhr.responseText.substring(start, end);
     // console.log(tempStr.length);
@@ -77,7 +83,9 @@ xhr.onload = function() {
   if(xhr.readyState === 4) {
     if(xhr.status === 200) {
       // console.log(xhr.responseText.length);
-      playImages(imgArr2, 1, 30);
+// appendImage(imgArr[0]);
+
+      playImages(imgArr2, 30);
     }
   }
 }
