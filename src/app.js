@@ -1,12 +1,33 @@
 
-var rawTextData = xmlFileLoader("http://localhost:8000/data/base64SingleImage");
+// var rawTextData = xmlFileLoader("http://localhost:8000/data/base64SingleImage");
+var rawTextData = xmlFileLoader("http://localhost:8000/data/base64Images");
+var imgArr = rawTextData.split('\n').filter(function(val) {
+  return val !=+ "";
+});
 
-var t = "data:image/png;base64," + rawTextData;
+function playImages(imgArr, i, fps) {
+  var imageEl = document.getElementById('imageFromVideo');
+  var src;
+  function render(imgArr, i) {
+    if (i == imgArr.length) return;
+    setTimeout(function() {
+      window.requestAnimationFrame(render.bind(this, imgArr, i + 1));
+    }, 1000 / fps);
+    imageEl.src = "data:image/png;base64," + imgArr[i];
+  };
+  render(imgArr, i);
+};
 
-var img = document.createElement('img');
-img.src = t;
-document.body.appendChild(img);
+function appendImage(imgString) {
+  var t = "data:image/png;base64," + imgString;
+  var img = document.createElement('img');
+  img.id = "imageFromVideo"
+  img.src = t;
+  document.body.appendChild(img);
+};
 
+appendImage(imgArr[0]);
+playImages(imgArr, 1, 30);
 
 // if (this.readyState == 4 || w.length - k < L * 1.2) {
 //     if (k > E + 5) {
