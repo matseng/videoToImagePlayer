@@ -9,119 +9,125 @@ Sugr.support.imageplayer = (function() {
 
   var _imagesArray, _frameIndex = 0, _imageEl, _paused, _timerStart;
 
+  function _split(rawTextData) {
+    return rawTextData.split('\n')
+      .filter(function(val) {
+        return val !=+ "";
+      }
+    )
+  };
+
+  function _play() {
+    if( !_imageEl) {
+      _appendFirstImage(_imagesArray[_frameIndex]);
+    }
+    _imageEl = document.getElementById('imageFromVideo');
+    _imageEl.width = this.width;
+
+    function render() {
+      if (this.frameCount && _frameIndex == this.frameCount) return;
+      if ( this.frameCount && _frameIndex === _imagesArray.length) {
+        _paused = true;
+        console.log("PAUSED to buffer download");
+        return;
+      }
+      setTimeout(function() {
+        _frameIndex++;
+        window.requestAnimationFrame(render.bind(this));
+      }.bind(this), 1000 / this.fps);
+      _imageEl.src = "data:image/jpeg;base64," + _imagesArray[_frameIndex];
+    };
+    
+    render.call(this);
+  };
+
+  function _appendFirstImage(imgString) {
+    var base64String = "data:image/jpeg;base64," + imgString;
+    _imageEl = document.createElement('img');
+    _imageEl.id = "imageFromVideo"
+    _imageEl.src = base64String;
+    document.body.appendChild(_imageEl);
+  };
+
+  function _autoplay() {
+    _load.call(this, {
+      onsend: function() {
+        if (window.performance && !_timerStart) _timerStart = window.performance.now();
+      },
+      // onprogress: ,
+      // oncomplete: ,
+      // onerror,
+    });
+  };
+
+  function _load(eventHandlers) {
+    var xhr;
+    this.xhr = xhr = new XMLHttpRequest();
+    xhr.open('GET', this.url, true);
+    xhr.addEventListener('progress', _updateProgressConstructor().bind(this), false);
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === 2) {
+        eventHandlers.onsend();
+      }
+    }.bind(this);
+    xhr.onload = function() {
+      if(xhr.readyState === 4) {
+        if(xhr.status === 200) {
+          this.frameCount = _imagesArray.length;
+        }
+      }
+    }.bind(this);
+    xhr.onerror = function(e) {
+      console.err(xhr.statusText);
+    };
+    xhr.send();
+  };
+
+  function _updateProgressConstructor() {
+    var start = 0;
+    var end;
+    var partialArr;
+    var chunkIndex = 0;
+    var tempStr = "";
+    var sum = 0;
+    return function(oEvent) {
+      _imagesArray = _imagesArray || [''];
+      if (oEvent.type && this.xhr.responseText.length) {
+        end = this.xhr.responseText.length;
+        partialArr = _split(_imagesArray[_imagesArray.length - 1] + this.xhr.responseText.substring(start, end));
+        _imagesArray.pop();
+        Array.prototype.push.apply(_imagesArray, partialArr)
+        start = end;
+        if(chunkIndex === 0 || _paused) {
+          _paused = false;
+          _play.call(this);
+        }
+        chunkIndex++;
+        console.log(chunkIndex);  //TODO: why isn't this being logged? 
+      }
+    };
+  };
+
   var ImagePlayer = function(url, fps, width, frameCount) {
     this.url = url;
-    // this.imagesString;
-    // _imagesArray;
     this.fps = fps;
     this.frameCount = frameCount;
-    // _frameIndex = 0;
-    // _paused;
-    // _timerStart;
-    // _imageEl;
     this.width =  width;
-  }
-
+  };
+    
   ImagePlayer.prototype = {
-
-    play: function() {
-      this._load();
+    autoplay: function() {
+      _autoplay.call(this);
     },
-
-    _base64ImageToString: function(rawTextData) {
-      return rawTextData.split('\n')
-        .filter(function(val) {
-          return val !=+ "";
-        }
-      )
-    },
-
-    _play: function() {
-      if( !_imageEl) this._appendFirstImage(_imagesArray[_frameIndex]);
-      // if(window.performance) console.log(window.performance.now() - _timerStart);
-      _imageEl = document.getElementById('imageFromVideo');
-      _imageEl.width = this.width;
-      function render() {
-        if (this.frameCount && _frameIndex == this.frameCount) return;
-        if ( this.frameCount && _frameIndex === _imagesArray.length) {
-          _paused = true;
-          console.log("PAUSED to buffer download");
-          return;
-        }
-        setTimeout(function() {
-          _frameIndex++;
-          window.requestAnimationFrame(render.bind(this));
-        }.bind(this), 1000 / this.fps);
-        _imageEl.src = "data:image/jpeg;base64," + _imagesArray[_frameIndex];
-      };
-      render.call(this);
-      // console.log(_imagesArray.length);
-    },
-
-    _appendFirstImage: function(imgString) {
-      var base64String = "data:image/jpeg;base64," + imgString;
-      _imageEl = document.createElement('img');
-      _imageEl.id = "imageFromVideo"
-      _imageEl.src = base64String;
-      document.body.appendChild(_imageEl);
-    },
-
-    _load: function() {
-      var xhr;
-      this.xhr = xhr = new XMLHttpRequest();
-      xhr.open('GET', this.url, true);
-      xhr.addEventListener('progress', this._updateProgress.bind(this), false);
-      xhr.onreadystatechange = function() {
-        if (xhr.readyState === 2) {
-          if (window.performance && !_timerStart) _timerStart = window.performance.now();
-        }
-      }.bind(this);
-      xhr.onload = function() {
-        if(xhr.readyState === 4) {
-          if(xhr.status === 200) {
-            this.frameCount = _imagesArray.length;
-          }
-        }
-      }.bind(this);
-      xhr.onerror = function(e) {
-        console.err(xhr.statusText);
-      };
-      xhr.send();
-    },
-
-    _updateProgress: (function(oEvent) {
-      var start = 0;
-      var end;
-      var partialArr;
-      var chunkIndex = 0;
-      var tempStr = "";
-      var sum = 0;
-      return function(oEvent) {
-        _imagesArray = _imagesArray || [''];
-        if (oEvent.type && this.xhr.responseText.length) {
-          end = this.xhr.responseText.length;
-          partialArr = this._base64ImageToString(_imagesArray[_imagesArray.length - 1] + this.xhr.responseText.substring(start, end));
-          _imagesArray.pop();
-          Array.prototype.push.apply(_imagesArray, partialArr)
-          start = end;
-          if(chunkIndex === 0 || _paused) {
-            _paused = false;
-            this._play();
-          }
-          chunkIndex++;
-          console.log(chunkIndex);  //TODO: why isn't this being logged? 
-        }
-      };
-    })(),
   };
 
   return ImagePlayer;
 
-})()
+})();
 
 
 var im = new Sugr.support.imageplayer("./data/base64Images_bak", 23, "320");
-im.play();
+im.autoplay();
 
 // var LENGTH;
 // var PAUSED;
