@@ -36,6 +36,7 @@ Sugr.support.imageplayer = (function() {
         window.requestAnimationFrame(render.bind(this));
       }.bind(this), 1000 / this.fps);
       _imageEl.src = "data:image/jpeg;base64," + _imagesArray[_frameIndex];
+      _imagesArray[_frameIndex] = null;
     };
     
     render.call(this);
@@ -53,37 +54,49 @@ Sugr.support.imageplayer = (function() {
     _load.call(this, {
       onsend: function() {
         if (window.performance && !_timerStart) _timerStart = window.performance.now();
-      },
-      // onprogress: ,
-      // oncomplete: ,
-      // onerror,
+      }.bind(this),
+
+      onprogress: _updateProgressConstructor().bind(this),
+
+      oncomplete: function() {
+        this.frameCount = _imagesArray.length;
+      }.bind(this),
+
+      onerror: function() {},
     });
   };
 
-  function _load(eventHandlers) {
+  function _load(eventHandler) {
     var xhr;
     this.xhr = xhr = new XMLHttpRequest();
+
     xhr.open('GET', this.url, true);
-    xhr.addEventListener('progress', _updateProgressConstructor().bind(this), false);
+    
     xhr.onreadystatechange = function() {
       if (xhr.readyState === 2) {
-        eventHandlers.onsend();
+        eventHandler.onsend();
       }
-    }.bind(this);
+    };
+    
     xhr.onload = function() {
       if(xhr.readyState === 4) {
         if(xhr.status === 200) {
-          this.frameCount = _imagesArray.length;
+          eventHandler.oncomplete();
         }
       }
-    }.bind(this);
-    xhr.onerror = function(e) {
+    }
+    
+    xhr.addEventListener('progress', eventHandler.onprogress, false);
+    
+    xhr.onerror = function() {
       console.err(xhr.statusText);
+      eventHandler.onerror();
     };
+
     xhr.send();
   };
 
-  function _updateProgressConstructor() {
+  function _updateProgressConstructor_OLD() {
     var start = 0;
     var end;
     var partialArr;
@@ -103,7 +116,53 @@ Sugr.support.imageplayer = (function() {
           _play.call(this);
         }
         chunkIndex++;
-        console.log(chunkIndex);  //TODO: why isn't this being logged? 
+        console.log(chunkIndex);
+      }
+    };
+  };
+
+      /* raw data stream 
+        --> raw data stream chunks (collection of base64 encoded images)
+        --> for each chunk (single base64 encoded image)
+        --> for each char (8 bytes = 32 bits per char) 
+        --> convert char into bits and save in Uint8Array
+        --> now we have an array of arrays
+      */
+  function _octetStringToByteArray(octetStr) {
+    var decodedData = window.atob(octetStr);  //decode octet string
+    var bitArr = Uint8Array(new ArrayBuffer(decodedData.length));  //
+    for(var i = 0; i < decodedData.length; i++) {
+      bitArr[i] = decodedData.charCodeAt(i);
+    }
+    var blob = new Blob([bitArr], {type: 'image/jpg'});
+    imgUrl = window.createObjectURL(blob)
+  };
+
+  function _updateProgressConstructor() {
+    var start = 0;
+    var end;
+    var partialArrBase64;
+    var partialArrImgUrl = [];
+    var chunkIndex = 0;
+    var tempStr = "";
+    var sum = 0;
+    _imagesArray = [''];
+    return function(oEvent) {
+      if (oEvent.type && this.xhr.responseText.length) {
+        end = this.xhr.responseText.length;
+        partialArrBase64 = _split(_imagesArray[_imagesArray.length - 1] + this.xhr.responseText.substring(start, end));
+        // for(var i = 0; i < partialArrBase64.length - 1; i++) {
+        //   partialArrImgUrl.push(_octetStringToByteArray(partialArrBase64[i]);
+        // }
+        _imagesArray.pop();
+        Array.prototype.push.apply(_imagesArray, partialArrBase64)
+        start = end;
+        if(chunkIndex === 0 || _paused) {
+          _paused = false;
+          _play.call(this);
+        }
+        chunkIndex++;
+        console.log(chunkIndex);
       }
     };
   };
@@ -124,7 +183,6 @@ Sugr.support.imageplayer = (function() {
   return ImagePlayer;
 
 })();
-
 
 var im = new Sugr.support.imageplayer("./data/base64Images_bak", 23, "320");
 im.autoplay();
