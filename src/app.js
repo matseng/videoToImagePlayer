@@ -1,7 +1,7 @@
 
 // var rawTextData = xmlFileLoader("http://localhost:8000/data/base64SingleImage");
-var rawTextData = xmlFileLoader("./data/base64Images");
-var imgArr = toImageArray(rawTextData);
+//var rawTextData = xmlFileLoader("./data/base64Images");
+//var imgArr = toImageArray(rawTextData);
 
 function toImageArray(rawTextData) {
   return rawTextData.split('\n')
@@ -20,6 +20,7 @@ function playImages(imgArr, fps) {
   appendImage(imgArr[0]);
   if(window.performance) console.log(window.performance.now() - TIMER_START);
   var imageEl = document.getElementById('imageFromVideo');
+  imageEl.width = "320";
   var src;
   function render(i) {
     if (i == imgArr.length) return;
@@ -35,25 +36,27 @@ function playImages2(imgArr, fps) {
   if( !document.getElementById('imageFromVideo')) appendImage(imgArr[INDEX]);
   if(window.performance) console.log(window.performance.now() - TIMER_START);
   var imageEl = document.getElementById('imageFromVideo');
+  imageEl.width = "320";
   var src;
   function render() {
     if (LENGTH && INDEX == LENGTH) return;
-    if (INDEX === imgArr.length) {
+    if (INDEX === imgArr.length - 1) {
       PAUSED = true;
+      console.log("PAUSED");
       return;
     }
     setTimeout(function() {
       INDEX++;
       window.requestAnimationFrame(render);
     }, 1000 / fps);
-    imageEl.src = "data:image/png;base64," + imgArr[INDEX];
+    imageEl.src = "data:image/jpeg;base64," + imgArr[INDEX];
   };
   render();
   console.log(imgArr.length);
 };
 
 function appendImage(imgString) {
-  var t = "data:image/png;base64," + imgString;
+  var t = "data:image/jpeg;base64," + imgString;
   var img = document.createElement('img');
   img.id = "imageFromVideo"
   img.src = t;
@@ -62,7 +65,7 @@ function appendImage(imgString) {
 
 // playImages(imgArr, 30);
 
-var octetStreamURL = "http://m.lkqd.net/media?format=img&domain=lkqd.net&adId=1&adSystem=LKQD&vrs=3&width=690&height=460&fr=27&iq=24&url=http%3A%2F%2Fad.lkqd.net%2Fserve%2Fqa.mp4";
+var octetStreamURL = "http://tapenvy.com/encoded_images"; //"http://localhost:8001/data/encoded_images" //"http://m.lkqd.net/media?format=img&domain=lkqd.net&adId=1&adSystem=LKQD&vrs=3&width=690&height=460&fr=27&iq=24&url=http%3A%2F%2Fad.lkqd.net%2Fserve%2Fqa.mp4";
 
 var xhr = new XMLHttpRequest();
 xhr.open('GET', octetStreamURL, true);
@@ -88,7 +91,7 @@ function updateProgress (oEvent) {
     start = end;
     if(chunkIndex === 0 || PAUSED) {
       PAUSED = false;
-      playImages2(imgArr2, 30);
+      playImages2(imgArr2, 23);
     }
     chunkIndex++;
     console.log(chunkIndex);
