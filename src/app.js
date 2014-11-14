@@ -61,16 +61,19 @@ ImagePlayer.prototype = {
   },
 
   _load: function() {
-    // var octetStreamURL = "./data/base64Images_bak";
     var xhr;
     this.xhr = xhr = new XMLHttpRequest();
     xhr.open('GET', this.url, true);
     xhr.addEventListener('progress', this._updateProgress.bind(this), false);
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === 2) {
+        if (window.performance && !this.timer_start) this.timer_start = window.performance.now();
+      }
+    }.bind(this);
     xhr.onload = function() {
       if(xhr.readyState === 4) {
         if(xhr.status === 200) {
           this.frameCount = this.imagesArray.length;
-          if (window.performance) this.timer_start = window.performance.now();
         }
       }
     }.bind(this);
@@ -81,31 +84,29 @@ ImagePlayer.prototype = {
   },
 
   _updateProgress: (function(oEvent) {
-    var imgArr = this.imagesArray = [''];
-    var xhr = this.xhr;
     var start = 0;
     var end;
     var partialArr;
     var chunkIndex = 0;
     var tempStr = "";
     var sum = 0;
-    var that = this;
     return function(oEvent) {
+      this.imagesArray = this.imagesArray || [''];
       if (oEvent.type && this.xhr.responseText.length) {
         end = this.xhr.responseText.length;
-        partialArr = this._base64ImageToString(imgArr[imgArr.length - 1] + this.xhr.responseText.substring(start, end));
+        partialArr = this._base64ImageToString(this.imagesArray[this.imagesArray.length - 1] + this.xhr.responseText.substring(start, end));
         this.imagesArray.pop();
-        Array.prototype.push.apply(imgArr, partialArr)
+        Array.prototype.push.apply(this.imagesArray, partialArr)
         start = end;
-        if(chunkIndex === 0 || PAUSED) {
-          PAUSED = false;
+        if(chunkIndex === 0 || this.paused) {
+          this.paused = false;
           this._play();
         }
         chunkIndex++;
         console.log(chunkIndex);  //TODO: why isn't this being logged? 
       }
     };
-  })(this),
+  })(),
 };
 
 var im = new ImagePlayer("./data/base64Images_bak", 23, "320");
