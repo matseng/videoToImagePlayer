@@ -3,114 +3,129 @@
 //var rawTextData = xmlFileLoader("./data/base64Images");
 //var imgArr = toImageArray(rawTextData);
 
-function toImageArray(rawTextData) {
-  return rawTextData.split('\n')
-    .filter(function(val) {
-      return val !=+ "";
-    }
-  )
+var ImagePlayer = function(url, fps, width, frameCount) {
+  this.url = url;
+  this.imagesString;
+  this.imagesArray;
+  this.fps = fps;
+  this.frameCount = frameCount;
+  this.frameIndex = 0;
+  this.paused;
+  this.timer_start;
+  this.imageEl;
+  this.width =  width;
+}
+
+ImagePlayer.prototype = {
+
+  play: function() {
+    this._load();
+  },
+
+  _base64ImageToString: function(rawTextData) {
+    return rawTextData.split('\n')
+      .filter(function(val) {
+        return val !=+ "";
+      }
+    )
+  },
+
+  _play: function() {
+    if( !this.imageEl) this._appendFirstImage(this.imagesArray[this.frameIndex]);
+    if(window.performance) console.log(window.performance.now() - this.timer_start);
+    this.imageEl = document.getElementById('imageFromVideo');
+    this.imageEl.width = this.width;
+    function render() {
+      if (this.frameCount && this.frameIndex == this.frameCount) return;
+      if ( this.frameCount && this.frameIndex === this.imagesArray.length) {
+        this.paused = true;
+        console.log("PAUSED to buffer download");
+        return;
+      }
+      setTimeout(function() {
+        this.frameIndex++;
+        window.requestAnimationFrame(render.bind(this));
+      }.bind(this), 1000 / this.fps);
+      this.imageEl.src = "data:image/jpeg;base64," + this.imagesArray[this.frameIndex];
+    };
+    render.call(this);
+    // console.log(this.imagesArray.length);
+  },
+
+  _appendFirstImage: function(imgString) {
+    var base64String = "data:image/jpeg;base64," + imgString;
+    this.imageEl = document.createElement('img');
+    this.imageEl.id = "imageFromVideo"
+    this.imageEl.src = base64String;
+    document.body.appendChild(this.imageEl);
+  },
+
+  _load: function() {
+    // var octetStreamURL = "./data/base64Images_bak";
+    var xhr;
+    this.xhr = xhr = new XMLHttpRequest();
+    xhr.open('GET', this.url, true);
+    xhr.addEventListener('progress', this._updateProgress.bind(this), false);
+    xhr.onload = function() {
+      if(xhr.readyState === 4) {
+        if(xhr.status === 200) {
+          this.frameCount = this.imagesArray.length;
+          if (window.performance) this.timer_start = window.performance.now();
+        }
+      }
+    }.bind(this);
+    xhr.onerror = function(e) {
+      console.err(xhr.statusText);
+    };
+    xhr.send();
+  },
+
+  _updateProgress: (function(oEvent) {
+    var imgArr = this.imagesArray = [''];
+    var xhr = this.xhr;
+    var start = 0;
+    var end;
+    var partialArr;
+    var chunkIndex = 0;
+    var tempStr = "";
+    var sum = 0;
+    var that = this;
+    return function(oEvent) {
+      if (oEvent.type && this.xhr.responseText.length) {
+        end = this.xhr.responseText.length;
+        partialArr = this._base64ImageToString(imgArr[imgArr.length - 1] + this.xhr.responseText.substring(start, end));
+        this.imagesArray.pop();
+        Array.prototype.push.apply(imgArr, partialArr)
+        start = end;
+        if(chunkIndex === 0 || PAUSED) {
+          PAUSED = false;
+          this._play();
+        }
+        chunkIndex++;
+        console.log(chunkIndex);  //TODO: why isn't this being logged? 
+      }
+    };
+  })(this),
 };
 
-var LENGTH;
-var PAUSED;
-var INDEX = 0;
-var TIMER_START;
+var im = new ImagePlayer("./data/base64Images_bak", 23, "320");
+im.play();
 
-function playImages(imgArr, fps) {
-  appendImage(imgArr[0]);
-  if(window.performance) console.log(window.performance.now() - TIMER_START);
-  var imageEl = document.getElementById('imageFromVideo');
-  imageEl.width = "320";
-  var src;
-  function render(i) {
-    if (i == imgArr.length) return;
-    setTimeout(function() {
-      window.requestAnimationFrame(render.bind(this, i + 1));
-    }, 1000 / fps);
-    imageEl.src = "data:image/png;base64," + imgArr[i];
-  };
-  render(1);
-};
-
-function playImages2(imgArr, fps) {
-  if( !document.getElementById('imageFromVideo')) appendImage(imgArr[INDEX]);
-  if(window.performance) console.log(window.performance.now() - TIMER_START);
-  var imageEl = document.getElementById('imageFromVideo');
-  imageEl.width = "320";
-  var src;
-  function render() {
-    if (LENGTH && INDEX == LENGTH) return;
-    if (INDEX === imgArr.length - 1) {
-      PAUSED = true;
-      console.log("PAUSED");
-      return;
-    }
-    setTimeout(function() {
-      INDEX++;
-      window.requestAnimationFrame(render);
-    }, 1000 / fps);
-    imageEl.src = "data:image/jpeg;base64," + imgArr[INDEX];
-  };
-  render();
-  console.log(imgArr.length);
-};
-
-function appendImage(imgString) {
-  var t = "data:image/jpeg;base64," + imgString;
-  var img = document.createElement('img');
-  img.id = "imageFromVideo"
-  img.src = t;
-  document.body.appendChild(img);
-};
+// var LENGTH;
+// var PAUSED;
+// var INDEX = 0;
+// var TIMER_START;
 
 // playImages(imgArr, 30);
 
-var octetStreamURL = "http://tapenvy.com/encoded_images"; //"http://localhost:8001/data/encoded_images" //"http://m.lkqd.net/media?format=img&domain=lkqd.net&adId=1&adSystem=LKQD&vrs=3&width=690&height=460&fr=27&iq=24&url=http%3A%2F%2Fad.lkqd.net%2Fserve%2Fqa.mp4";
-
-var xhr = new XMLHttpRequest();
-xhr.open('GET', octetStreamURL, true);
-xhr.addEventListener('progress', updateProgress, false);
+// var octetStreamURL = "http://tapenvy.com/encoded_images"; //"http://localhost:8001/data/encoded_images" //"http://m.lkqd.net/media?format=img&domain=lkqd.net&adId=1&adSystem=LKQD&vrs=3&width=690&height=460&fr=27&iq=24&url=http%3A%2F%2Fad.lkqd.net%2Fserve%2Fqa.mp4";
 
 
 // progress on transfers from the server to the client (downloads)
-var imgArr2 = [""];
-var start = 0;
-var end;
-var partial;
-var partialArr;
-var chunkIndex = 0;
 
-var tempStr = "";
-var sum = 0;
-function updateProgress (oEvent) {
-  if (oEvent.type && xhr.responseText.length) {
-    end = xhr.responseText.length;
-    partialArr = toImageArray(imgArr2[imgArr2.length - 1] + xhr.responseText.substring(start, end));
-    imgArr2.pop();
-    Array.prototype.push.apply(imgArr2, partialArr)
-    start = end;
-    if(chunkIndex === 0 || PAUSED) {
-      PAUSED = false;
-      playImages2(imgArr2, 23);
-    }
-    chunkIndex++;
-    console.log(chunkIndex);
-  }
-};
 
-xhr.onload = function() {
-  if(xhr.readyState === 4) {
-    if(xhr.status === 200) {
-      // playImages(toImageArray(xhr.responseText), 30);
-      LENGTH = imgArr2.length;
-    }
-  }
-}
-xhr.onerror = function(e) {
-  console.err(xhr.statusText);
-};
-xhr.send();
-if (window.performance) TIMER_START = window.performance.now();
+
+
 
 
 // if (this.readyState == 4 || w.length - k < L * 1.2) {
