@@ -7,7 +7,7 @@ Sugr.support = Sugr.support || {};
 
 Sugr.support.imageplayer = (function() {
 
-  var _imagesArray, _frameIndex = 0, _imageEl, _paused, _timerStart;
+  var _imagesArray, _imagesArrayType, _frameIndex = 0, _imageEl, _paused, _timerStart;
 
   function _split(rawTextData) {
     return rawTextData.split('\n')
@@ -19,7 +19,7 @@ Sugr.support.imageplayer = (function() {
 
   function _play() {
     if( !_imageEl) {
-      _appendFirstImage(_imagesArray[_frameIndex]);
+      _appendImageElement.call(this);
     }
     _imageEl = document.getElementById('imageFromVideo');
     _imageEl.width = this.width;
@@ -35,19 +35,23 @@ Sugr.support.imageplayer = (function() {
         _frameIndex++;
         window.requestAnimationFrame(render.bind(this));
       }.bind(this), 1000 / this.fps);
-      _imageEl.src = "data:image/jpeg;base64," + _imagesArray[_frameIndex];
+      if (_imagesArrayType === 'base64') _imageEl.src = "data:image/jpeg;base64," + _imagesArray[_frameIndex];
+      if (_imagesArrayType === 'url') _imageEl.src = _imagesArray[_frameIndex];
       _imagesArray[_frameIndex] = null;
     };
     
     render.call(this);
   };
 
-  function _appendFirstImage(imgString) {
-    var base64String = "data:image/jpeg;base64," + imgString;
+  function _appendImageElement(imgString) {
+    // var base64String = "data:image/jpeg;base64," + imgString;
     _imageEl = document.createElement('img');
-    _imageEl.id = "imageFromVideo"
-    _imageEl.src = base64String;
+    _imageEl.id = "imageFromVideo";
+    _imageEl.width = this.width;
+    // _imageEl.src = base64String;
+    // _imageEl.src = imgString;
     document.body.appendChild(_imageEl);
+    // debugger
   };
 
   function _autoplay() {
@@ -121,21 +125,15 @@ Sugr.support.imageplayer = (function() {
     };
   };
 
-      /* raw data stream 
-        --> raw data stream chunks (collection of base64 encoded images)
-        --> for each chunk (single base64 encoded image)
-        --> for each char (8 bytes = 32 bits per char) 
-        --> convert char into bits and save in Uint8Array
-        --> now we have an array of arrays
-      */
-  function _octetStringToByteArray(octetStr) {
-    var decodedData = window.atob(octetStr);  //decode octet string
-    var bitArr = Uint8Array(new ArrayBuffer(decodedData.length));  //
+  function _base64StringToImageUrl(base64Str) {
+    var decodedData = window.atob(base64Str);  // decode base64 string to "text" (see http://en.wikipedia.org/wiki/Base64)
+    var bitArr = new Uint8Array(new ArrayBuffer(decodedData.length));  // initialize array: each char corresponds to 8 bits that will compose an image
     for(var i = 0; i < decodedData.length; i++) {
-      bitArr[i] = decodedData.charCodeAt(i);
+      bitArr[i] = decodedData.charCodeAt(i);  // unsigned 8 bit integer
     }
     var blob = new Blob([bitArr], {type: 'image/jpg'});
-    imgUrl = window.createObjectURL(blob)
+    var imgUrl = window.URL.createObjectURL(blob);
+    return imgUrl;
   };
 
   function _updateProgressConstructor() {
@@ -143,19 +141,27 @@ Sugr.support.imageplayer = (function() {
     var end;
     var partialArrBase64;
     var partialArrImgUrl = [];
+    var chunk;
     var chunkIndex = 0;
     var tempStr = "";
     var sum = 0;
     _imagesArray = [''];
+    var remainder = '';
     return function(oEvent) {
       if (oEvent.type && this.xhr.responseText.length) {
         end = this.xhr.responseText.length;
-        partialArrBase64 = _split(_imagesArray[_imagesArray.length - 1] + this.xhr.responseText.substring(start, end));
-        // for(var i = 0; i < partialArrBase64.length - 1; i++) {
-        //   partialArrImgUrl.push(_octetStringToByteArray(partialArrBase64[i]);
-        // }
-        _imagesArray.pop();
-        Array.prototype.push.apply(_imagesArray, partialArrBase64)
+        chunk = this.xhr.responseText.substring(start, end);
+        partialArrBase64 = _split(remainder + chunk);
+        for(var i = 0; i < partialArrBase64.length - 1; i++) {
+          if (window.URL && window.URL.createObjectURL) {
+            _imagesArrayType = 'url';
+            _imagesArray.push(_base64StringToImageUrl(partialArrBase64[i]));
+          } else {
+            _imagesArrayType = 'base64';
+            _imagesArray.push(partialArrBase64[i]);
+          }
+        }
+        remainder = partialArrBase64[partialArrBase64.length - 1];
         start = end;
         if(chunkIndex === 0 || _paused) {
           _paused = false;
@@ -194,7 +200,7 @@ im.autoplay();
 
 // playImages(imgArr, 30);
 
-// var octetStreamURL = "http://tapenvy.com/encoded_images"; //"http://localhost:8001/data/encoded_images" //"http://m.lkqd.net/media?format=img&domain=lkqd.net&adId=1&adSystem=LKQD&vrs=3&width=690&height=460&fr=27&iq=24&url=http%3A%2F%2Fad.lkqd.net%2Fserve%2Fqa.mp4";
+// var base64StreamURL = "http://tapenvy.com/encoded_images"; //"http://localhost:8001/data/encoded_images" //"http://m.lkqd.net/media?format=img&domain=lkqd.net&adId=1&adSystem=LKQD&vrs=3&width=690&height=460&fr=27&iq=24&url=http%3A%2F%2Fad.lkqd.net%2Fserve%2Fqa.mp4";
 
 
 // progress on transfers from the server to the client (downloads)
