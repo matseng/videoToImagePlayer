@@ -16,6 +16,7 @@ Sugr.imageplayer = (function() {
   };
 
   function _play() {
+    if (window.performance && _timerStart) console.log(window.performance.now() - _timerStart);
     if( !_imageEl) {
       _appendImageElement.call(this);
     }
@@ -51,7 +52,6 @@ Sugr.imageplayer = (function() {
   function _autoplay() {
     _load.call(this, {
       onsend: function() {
-        if (window.performance && !_timerStart) _timerStart = window.performance.now();
       }.bind(this),
 
       onprogress: _updateProgressConstructor().bind(this),
@@ -92,6 +92,7 @@ Sugr.imageplayer = (function() {
     };
 
     xhr.send();
+    if (window.performance && !_timerStart) _timerStart = window.performance.now();
   };
 
   function _base64StringToImageUrl(base64Str) {
@@ -122,9 +123,9 @@ Sugr.imageplayer = (function() {
         chunk = this.xhr.responseText.substring(start, end);
         partialArrBase64 = _split(remainder + chunk);
         for(var i = 0; i < partialArrBase64.length - 1; i++) {
-          if (window.URL && window.URL.createObjectURL && window.atob && Blob) {
+          if (false && window.URL && window.URL.createObjectURL && window.atob && Blob) {
             _imagesArrayType = 'url';
-            _imagesArray.push(_base64StringToImageUrl(partialArrBase64[i]));
+            _imagesArray.push(_base64StringToImageUrl(partialArrBase64[i]));  //Note: about 130ms on MacBook Air 2012
           } else {
             _imagesArrayType = 'base64';
             _imagesArray.push(partialArrBase64[i]);

@@ -33,8 +33,8 @@ function playImages(imgArr, fps) {
 };
 
 function playImages2(imgArr, fps) {
-  if( !document.getElementById('imageFromVideo')) appendImage(imgArr[INDEX]);
   if(window.performance) console.log(window.performance.now() - TIMER_START);
+  if( !document.getElementById('imageFromVideo')) appendImage(imgArr[INDEX]);
   var imageEl = document.getElementById('imageFromVideo');
   imageEl.width = "320";
   var src;
