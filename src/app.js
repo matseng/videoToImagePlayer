@@ -124,7 +124,7 @@ Sugr.imageplayer = (function() {
   };
 
   function _base64StringToImageUrl(base64Str) {
-    var decodedData = window.atob(base64Str);  // decode base64 string to "text" (see http://en.wikipedia.org/wiki/Base64)
+    var decodedData = window.atob(base64Str);  // decode base64 string to an octet aka character (see http://en.wikipedia.org/wiki/Base64)
     var bitArr = new Uint8Array(new ArrayBuffer(decodedData.length));  // initialize array: each char corresponds to 8 bits that will compose an image
     for(var i = 0; i < decodedData.length; i++) {
       bitArr[i] = decodedData.charCodeAt(i);  // unsigned 8 bit integer
