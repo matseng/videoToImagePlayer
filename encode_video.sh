@@ -9,5 +9,5 @@ for f in $FILES
 do
   echo "Processing $f file..."
   # take action on each file. $f store current file name
-  base64 $f >> data/base64Images
+  base64 $f >> data/base64ImagesMySpace
 done
