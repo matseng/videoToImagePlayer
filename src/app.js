@@ -42,14 +42,10 @@ Sugr.imageplayer = (function() {
   };
 
   function _appendImageElement(imgString) {
-    // var base64String = "data:image/jpeg;base64," + imgString;
     _imageEl = document.createElement('img');
     _imageEl.id = "imageFromVideo";
     _imageEl.width = this.width;
-    // _imageEl.src = base64String;
-    // _imageEl.src = imgString;
     document.body.appendChild(_imageEl);
-    // debugger
   };
 
   function _autoplay() {
@@ -96,31 +92,6 @@ Sugr.imageplayer = (function() {
     };
 
     xhr.send();
-  };
-
-  function _updateProgressConstructor_OLD() {
-    var start = 0;
-    var end;
-    var partialArr;
-    var chunkIndex = 0;
-    var tempStr = "";
-    var sum = 0;
-    return function(oEvent) {
-      _imagesArray = _imagesArray || [''];
-      if (oEvent.type && this.xhr.responseText.length) {
-        end = this.xhr.responseText.length;
-        partialArr = _split(_imagesArray[_imagesArray.length - 1] + this.xhr.responseText.substring(start, end));
-        _imagesArray.pop();
-        Array.prototype.push.apply(_imagesArray, partialArr)
-        start = end;
-        if(chunkIndex === 0 || _paused) {
-          _paused = false;
-          _play.call(this);
-        }
-        chunkIndex++;
-        console.log(chunkIndex);
-      }
-    };
   };
 
   function _base64StringToImageUrl(base64Str) {

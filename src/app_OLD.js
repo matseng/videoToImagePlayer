@@ -66,7 +66,9 @@ function appendImage(imgString) {
 // playImages(imgArr, 30);
 
 // var octetStreamURL = "http://tapenvy.com/encoded_images"; //"http://localhost:8001/data/encoded_images" //"http://m.lkqd.net/media?format=img&domain=lkqd.net&adId=1&adSystem=LKQD&vrs=3&width=690&height=460&fr=27&iq=24&url=http%3A%2F%2Fad.lkqd.net%2Fserve%2Fqa.mp4";
-var octetStreamURL = "./data/base64Images_bak"
+// var octetStreamURL = "./data/base64Images_bak"
+// var octetStreamURL = "./data/base64ImagesMySpace10x"
+var octetStreamURL = "./data/base64ImagesMySpace";
 
 var xhr = new XMLHttpRequest();
 xhr.open('GET', octetStreamURL, true);
