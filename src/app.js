@@ -3,9 +3,7 @@
 //var rawTextData = xmlFileLoader("./data/base64Images");
 //var imgArr = toImageArray(rawTextData);
 var Sugr = Sugr || {};
-Sugr.support = Sugr.support || {};
-
-Sugr.support.imageplayer = (function() {
+Sugr.imageplayer = (function() {
 
   var _imagesArray, _imagesArrayType, _frameIndex = 0, _imageEl, _paused, _timerStart;
 
@@ -153,7 +151,7 @@ Sugr.support.imageplayer = (function() {
         chunk = this.xhr.responseText.substring(start, end);
         partialArrBase64 = _split(remainder + chunk);
         for(var i = 0; i < partialArrBase64.length - 1; i++) {
-          if (window.URL && window.URL.createObjectURL) {
+          if (window.URL && window.URL.createObjectURL && window.atob && Blob) {
             _imagesArrayType = 'url';
             _imagesArray.push(_base64StringToImageUrl(partialArrBase64[i]));
           } else {
@@ -190,25 +188,64 @@ Sugr.support.imageplayer = (function() {
 
 })();
 
-var im = new Sugr.support.imageplayer("./data/base64Images_bak", 23, "320");
-im.autoplay();
+(function run() {
+  // var im = new Sugr.imageplayer("./data/base64Images_bak", 23, "320");
+  var scriptURL = _getScriptURL();
+  var queryObj = _queryStringToObject(scriptURL);
+  var im = new Sugr.imageplayer(queryObj.url, queryObj.fps, queryObj.width);
+  im.autoplay();
 
-// var LENGTH;
-// var PAUSED;
-// var INDEX = 0;
-// var TIMER_START;
-
-// playImages(imgArr, 30);
-
-// var base64StreamURL = "http://tapenvy.com/encoded_images"; //"http://localhost:8001/data/encoded_images" //"http://m.lkqd.net/media?format=img&domain=lkqd.net&adId=1&adSystem=LKQD&vrs=3&width=690&height=460&fr=27&iq=24&url=http%3A%2F%2Fad.lkqd.net%2Fserve%2Fqa.mp4";
-
-
-// progress on transfers from the server to the client (downloads)
-
+  function _getScriptURL() {
+    var scripts = document.getElementsByTagName('script');
+    var index = scripts.length - 1;
+    var myScript = scripts[index];
+    return myScript.src;
+  };
 
 
+  function _queryStringToObject(str) {
+    if (typeof str !== 'string') {
+      return {};
+    }
+    str = str.substring( str.indexOf('?') + 1 );
+    str = str.trim().replace(/^(\?|#)/, '');
 
+    if (!str) {
+      return {};
+    }
 
+    return str.trim().split('&').reduce(function (ret, param) {
+      var parts = param.replace(/\+/g, ' ').split('=');
+      var key = parts[0];
+      var val = parts[1];
+
+      key = decodeURIComponent(key);
+      // missing `=` should be `null`:
+      // http://w3.org/TR/2012/WD-url-20120524/#collect-url-parameters
+      val = val === undefined ? null : decodeURIComponent(val);
+
+      if(typeof val === typeof "") {
+        var array = val.split(',');
+        if(array.length == 1) {
+          val = array[0];
+        } 
+        else {
+          val = array;
+        }
+      }
+
+      if (!ret.hasOwnProperty(key)) {
+        ret[key] = val;
+      } else if (Array.isArray(ret[key])) {
+        ret[key].push(val);
+      } else {
+        ret[key] = [ret[key], val];
+      }
+
+      return ret;
+    }, {});
+  };
+})();
 
 // if (this.readyState == 4 || w.length - k < L * 1.2) {
 //     if (k > E + 5) {
