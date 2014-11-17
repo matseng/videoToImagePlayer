@@ -45,6 +45,7 @@ Sugr.imageplayer = (function() {
     _imageEl.id = "imageFromVideo";
     _imageEl.width = this.width;
     _containerEl.appendChild(_imageEl);
+    console.log('append image element');
   };
 
   function _autoplay() {
@@ -182,6 +183,7 @@ Sugr.imageplayer = (function() {
 
 
   function _queryStringToObject(str) {
+    var baseURL;
     if (typeof str !== 'string') {
       return {};
     }

@@ -18,5 +18,8 @@
   "homepage": "https://github.com/matseng/videoToImagePlayer",
   "dependencies": {
     "lodash": "^2.4.1"
+  },
+  "devDependencies": {
+    "http-server": "^0.7.3"
   }
 }
