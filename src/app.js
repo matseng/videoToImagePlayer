@@ -50,7 +50,10 @@ Sugr.imageplayer = (function() {
   };
 
   function _imageClicked() {
-    debugger
+    var timeElapsed = 1 / this.fps * (_frameIndex - 5);
+    _videoEl.currentTime = timeElapsed;
+    _videoEl.play();
+    // debugger
   };
 
   function _autoplay() {
