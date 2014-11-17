@@ -5,7 +5,7 @@
 var Sugr = Sugr || {};
 Sugr.imageplayer = (function() {
 
-  var _imagesArray, _imagesArrayType, _frameIndex = 0, _containerEl, _imageEl, _paused, _timerStart;
+  var _imagesArray, _imagesArrayType, _frameIndex = 0, _containerEl, _videoEl, _imageEl, _paused, _timerStart;
 
   function _split(rawTextData) {
     return rawTextData.split('\n')
@@ -45,7 +45,12 @@ Sugr.imageplayer = (function() {
     _imageEl.id = "imageFromVideo";
     _imageEl.width = this.width;
     _containerEl.appendChild(_imageEl);
+    _imageEl.addEventListener('click', _imageClicked.bind(this));
     console.log('append image element');
+  };
+
+  function _imageClicked() {
+    debugger
   };
 
   function _autoplay() {
@@ -157,6 +162,7 @@ Sugr.imageplayer = (function() {
 
     setContainer: function(containerEl) {
       _containerEl = containerEl;
+      _videoEl = containerEl.getElementsByTagName('video')[0];
     },
   };
 

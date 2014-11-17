@@ -8,11 +8,9 @@
   <!-- <script src='./src/xmlFileLoader.js'></script> -->
   <!-- // <script src='./src/app.js'></script> -->
   <!-- // <script src='http://localhost:8000/src/app.js?test=helloworld'></script> -->
-  <div>
-    <div class=''>myspace.mp4</div>
+  <div id='video-container'>
     <video src='http://localhost:8080/videos/myspace.mp4' width="320px" webkit-playsinline muted></video>
   </div>
-  <div id='image-player-container'></div>
 
   <script>
     var iframe = document.createElement('iframe');
@@ -26,7 +24,7 @@
         iframeDocument = iframeDocument.document;
     }
     window.__setContainer = function() {
-      iframe.contentWindow.__im.setContainer(document.getElementById('image-player-container'));
+      iframe.contentWindow.__im.setContainer(document.getElementById('video-container'));
     };
     // var src = 'http://localhost:8000/src/app.js?width=320&fps=23&url=' + encodeURIComponent('./data/base64Images_bak');
     // var src = 'http://localhost:8000/src/app.js?width=320&fps=23&url=' + encodeURIComponent('./data/base64ImagesMySpace5x');
