@@ -160,6 +160,7 @@ Sugr.imageplayer = (function() {
 
 })();
 
+
 (function run() {
   // var im = new Sugr.imageplayer("./data/base64Images_bak", 23, "320");
   var scriptURL = _getScriptURL();
