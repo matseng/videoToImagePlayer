@@ -5,7 +5,7 @@
 var Sugr = Sugr || {};
 Sugr.imageplayer = (function() {
 
-  var _imagesArray, _imagesArrayType, _frameIndex = 0, _imageEl, _paused, _timerStart;
+  var _imagesArray, _imagesArrayType, _frameIndex = 0, _containerEl, _imageEl, _paused, _timerStart;
 
   function _split(rawTextData) {
     return rawTextData.split('\n')
@@ -20,8 +20,6 @@ Sugr.imageplayer = (function() {
     if( !_imageEl) {
       _appendImageElement.call(this);
     }
-    _imageEl = document.getElementById('imageFromVideo');
-    _imageEl.width = this.width;
 
     function render() {
       if (this.frameCount && _frameIndex == this.frameCount) return;
@@ -46,7 +44,7 @@ Sugr.imageplayer = (function() {
     _imageEl = document.createElement('img');
     _imageEl.id = "imageFromVideo";
     _imageEl.width = this.width;
-    document.body.appendChild(_imageEl);
+    _containerEl.appendChild(_imageEl);
   };
 
   function _autoplay() {
@@ -149,10 +147,15 @@ Sugr.imageplayer = (function() {
     this.frameCount = frameCount;
     this.width =  width;
   };
-    
+
   ImagePlayer.prototype = {
+    
     autoplay: function() {
       _autoplay.call(this);
+    },
+
+    setContainer: function(containerEl) {
+      _containerEl = containerEl;
     },
   };
 
@@ -165,8 +168,10 @@ Sugr.imageplayer = (function() {
   // var im = new Sugr.imageplayer("./data/base64Images_bak", 23, "320");
   var scriptURL = _getScriptURL();
   var queryObj = _queryStringToObject(scriptURL);
-  var im = new Sugr.imageplayer(queryObj.url, queryObj.fps, queryObj.width);
-  im.autoplay();
+  window.__im = new Sugr.imageplayer(queryObj.url, queryObj.fps, queryObj.width);
+  window.parent.__setContainer();
+  console.log('__im loaded and set container');
+  __im.autoplay();
 
   function _getScriptURL() {
     var scripts = document.getElementsByTagName('script');

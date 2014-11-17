@@ -18,10 +18,13 @@
     iframe.width = 0;
     iframe.height = 0;
     document.body.appendChild(iframe);
-    var iframeDocument = iframe.contentWindow || iframe.contentDocument;
+    var iframeDocument = iframe.contentWindow.document || iframe.contentDocument;
     if (iframeDocument.document) {
         iframeDocument = iframeDocument.document;
     }
+    window.__setContainer = function() {
+      iframe.contentWindow.__im.setContainer(document.getElementById('image-player-container'));
+    };
     // var src = 'http://localhost:8000/src/app.js?width=320&fps=23&url=' + encodeURIComponent('./data/base64Images_bak');
     // var src = 'http://localhost:8000/src/app.js?width=320&fps=23&url=' + encodeURIComponent('./data/base64ImagesMySpace5x');
     // var src = 'http://localhost:8000/src/app.js?width=320&fps=23&url=' + encodeURIComponent('./data/base64ImagesMySpace');
