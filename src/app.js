@@ -5,7 +5,7 @@
 var Sugr = Sugr || {};
 Sugr.imageplayer = (function() {
 
-  var _imagesArray, _imagesArrayType, _frameIndex = 0, _containerEl, _videoEl, _imageEl, _paused, _timerStart;
+  var _imagesArray, _imagesArrayType, _frameIndex = 0, _containerEl, _videoEl, _imageEl, _clicked, _paused, _timerStart;
 
   function _split(rawTextData) {
     return rawTextData.split('\n')
@@ -28,6 +28,15 @@ Sugr.imageplayer = (function() {
         console.log("PAUSED to buffer download");
         return;
       }
+      if( _clicked ) {
+        // _videoEl.currentTime = 1 / this.fps * (_frameIndex - 2);
+        // _videoEl.play();
+        // _videoEl.currentTime = 1 / this.fps * (_frameIndex - 2);
+        // window.requestAnimationFrame(function() {
+        _sync.apply(this);
+        // }.bind(this));
+        // return;
+      }
       setTimeout(function() {
         _frameIndex++;
         window.requestAnimationFrame(render.bind(this));
@@ -44,16 +53,41 @@ Sugr.imageplayer = (function() {
     _imageEl = document.createElement('img');
     _imageEl.id = "imageFromVideo";
     _imageEl.width = this.width;
+    _imageEl.style.position = 'absolute';
+    _imageEl.style.left = _videoEl.offsetLeft;
+    _imageEl.style.top = _videoEl.offsetTop;
     _containerEl.appendChild(_imageEl);
-    _imageEl.addEventListener('click', _imageClicked.bind(this));
+    // _imageEl.addEventListener('click', _imageClicked.bind(this));
+    _imageEl.addEventListener('click', function() {
+      _videoEl.currentTime = 1 / this.fps * (_frameIndex - 2);
+      _videoEl.play(); 
+      _clicked = true;
+    }.bind(this));
     console.log('append image element');
   };
 
-  function _imageClicked() {
-    var timeElapsed = 1 / this.fps * (_frameIndex - 5);
-    _videoEl.currentTime = timeElapsed;
+  function _sync() {
+    // window.requestAnimationFrame(function() {
+      // _videoEl.currentTime = 1 / this.fps * (_frameIndex - 2);
+      // _imageEl.style.visibility = 'hidden';
+    // }.bind(this));
+    _clicked = false;
+  };
+
+  function _playVideo() {
+    // var timeElapsed = 1 / this.fps * (_frameIndex - 5);
     _videoEl.play();
-    // debugger
+    var timeElapsed = 1 / this.fps * (_frameIndex - 2);
+    _videoEl.currentTime = timeElapsed;
+    setTimeout(function() {    
+      window.requestAnimationFrame(function() {
+        _videoEl.style.opacity = 0.5; //For real browsers;
+
+        // _videoEl.style.visibility = 'visible';
+        // _imageEl.style.visibility = 'hidden';
+        // _videoEl.pause();
+      });
+    }, 500);
   };
 
   function _autoplay() {
@@ -130,7 +164,7 @@ Sugr.imageplayer = (function() {
         chunk = this.xhr.responseText.substring(start, end);
         partialArrBase64 = _split(remainder + chunk);
         for(var i = 0; i < partialArrBase64.length - 1; i++) {
-          if (false && window.URL && window.URL.createObjectURL && window.atob && Blob) {
+          if (window.URL && window.URL.createObjectURL && window.atob && Blob) {
             _imagesArrayType = 'url';
             _imagesArray.push(_base64StringToImageUrl(partialArrBase64[i]));  //Note: about 130ms on MacBook Air 2012
           } else {
@@ -165,7 +199,11 @@ Sugr.imageplayer = (function() {
 
     setContainer: function(containerEl) {
       _containerEl = containerEl;
+      if(_containerEl.style.position === "") _containerEl.style.position = 'relative'
       _videoEl = containerEl.getElementsByTagName('video')[0];
+      // _videoEl.style.visibility = 'hidden';
+      // _videoEl.style.opacity = .5; //For real browsers;
+      // _videoEl.style.filter = "alpha(opacity=50)"; //For IE;
     },
   };
 
