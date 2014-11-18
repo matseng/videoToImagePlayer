@@ -29,14 +29,9 @@ Sugr.imageplayer = (function() {
         return;
       }
       if( _clicked ) {
-        // _videoEl.currentTime = 1 / this.fps * (_frameIndex - 2);
-        // _videoEl.play();
-        // _videoEl.currentTime = 1 / this.fps * (_frameIndex - 2);
-        // window.requestAnimationFrame(function() {
-        _sync.apply(this);
-        // }.bind(this));
-        // return;
+        return;
       }
+
       setTimeout(function() {
         _frameIndex++;
         window.requestAnimationFrame(render.bind(this));
@@ -44,8 +39,7 @@ Sugr.imageplayer = (function() {
       if (_imagesArrayType === 'base64') _imageEl.src = "data:image/jpeg;base64," + _imagesArray[_frameIndex];
       if (_imagesArrayType === 'url') _imageEl.src = _imagesArray[_frameIndex];
       _imagesArray[_frameIndex] = null;
-    };
-    
+    };    
     render.call(this);
   };
 
@@ -57,37 +51,18 @@ Sugr.imageplayer = (function() {
     _imageEl.style.left = _videoEl.offsetLeft;
     _imageEl.style.top = _videoEl.offsetTop;
     _containerEl.appendChild(_imageEl);
-    // _imageEl.addEventListener('click', _imageClicked.bind(this));
-    _imageEl.addEventListener('click', function() {
-      _videoEl.currentTime = 1 / this.fps * (_frameIndex - 2);
-      _videoEl.play(); 
-      _clicked = true;
-    }.bind(this));
+    _imageEl.addEventListener('click', _onclick.bind(this));
     console.log('append image element');
   };
 
-  function _sync() {
-    // window.requestAnimationFrame(function() {
-      // _videoEl.currentTime = 1 / this.fps * (_frameIndex - 2);
-      // _imageEl.style.visibility = 'hidden';
-    // }.bind(this));
-    _clicked = false;
-  };
-
-  function _playVideo() {
-    // var timeElapsed = 1 / this.fps * (_frameIndex - 5);
+  function _onclick() {
+    _videoEl.currentTime = 1 / this.fps * (_frameIndex - 2);
     _videoEl.play();
-    var timeElapsed = 1 / this.fps * (_frameIndex - 2);
-    _videoEl.currentTime = timeElapsed;
-    setTimeout(function() {    
-      window.requestAnimationFrame(function() {
-        _videoEl.style.opacity = 0.5; //For real browsers;
-
-        // _videoEl.style.visibility = 'visible';
-        // _imageEl.style.visibility = 'hidden';
-        // _videoEl.pause();
-      });
-    }, 500);
+    _imageEl.style.transition = "1s"    
+    window.requestAnimationFrame(function() {
+      _imageEl.style.visibility = 'hidden';
+      setTimeout(function() {_clicked = true;}, 1000);
+    }.bind(this));
   };
 
   function _autoplay() {
