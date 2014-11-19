@@ -1,7 +1,3 @@
-
-// var rawTextData = xmlFileLoader("http://localhost:8000/data/base64SingleImage");
-//var rawTextData = xmlFileLoader("./data/base64Images");
-//var imgArr = toImageArray(rawTextData);
 var Sugr = Sugr || {};
 Sugr.imageplayer = (function() {
 
@@ -176,9 +172,6 @@ Sugr.imageplayer = (function() {
       _containerEl = containerEl;
       if(_containerEl.style.position === "") _containerEl.style.position = 'relative'
       _videoEl = containerEl.getElementsByTagName('video')[0];
-      // _videoEl.style.visibility = 'hidden';
-      // _videoEl.style.opacity = .5; //For real browsers;
-      // _videoEl.style.filter = "alpha(opacity=50)"; //For IE;
     },
   };
 
@@ -188,7 +181,6 @@ Sugr.imageplayer = (function() {
 
 
 (function run() {
-  // var im = new Sugr.imageplayer("./data/base64Images_bak", 23, "320");
   var scriptURL = _getScriptURL();
   var queryObj = _queryStringToObject(scriptURL);
   window.__im = new Sugr.imageplayer(queryObj.url, queryObj.fps, queryObj.width);
@@ -248,46 +240,3 @@ Sugr.imageplayer = (function() {
     }, {});
   };
 })();
-
-// if (this.readyState == 4 || w.length - k < L * 1.2) {
-//     if (k > E + 5) {
-//         N = true;
-//         R.abort()
-//     } else {
-//         var F = e.substring(A + 1).split("\n").filter(function(e) {
-//             return e != ""
-//         });
-//         A = e.lastIndexOf("\n");
-//         if (this.readyState != 4)
-//             F.pop();
-//         F = F.map(function(e) {
-//             try {
-//                 return Xa(e)
-//             } catch (t) {
-//                 return ""
-//             }
-//         }).filter(function(e) {
-//             return e != ""
-//         });
-//         w = w.concat(F)
-//     }
-// }
-
-// function Xa(e) {
-//             var t;
-//             if (window.requestAnimationFrame) {
-//                 var a = window.atob(e);
-//                 var i = a.length;
-//                 var r = new Uint8Array(new ArrayBuffer(i));
-//                 for (var n = 0; n < i; n++) {
-//                     r[n] = a.charCodeAt(n)
-//                 }
-//                 var l = new Blob([r], {
-//                     type: "image/jpeg"
-//                 });
-//                 t = Qa.createObjectURL(l)
-//             } else {
-//                 t = "data:image/png;base64," + e
-//             }
-//             return t
-//         }
