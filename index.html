@@ -21,15 +21,16 @@
         iframeDocument = iframeDocument.document;
     }
 
-    window.__setContainer = function() {
-      iframe.contentWindow.__im.setContainer(document.getElementById('video-container'));
-    };
-    
     var src = 'src/app.js?width=320&fps=23&url=' + encodeURIComponent('data/base64ImagesMySpace');
-    var val = '<scr' + 'ipt type="text/javascript" src="'+ src +'"></scr' + 'ipt>';
+    var val = '<scr' + 'ipt type="text/javascript" src="' + src + '"></scr' + 'ipt>';
     iframeDocument.open();
     iframeDocument.write(val);
     iframeDocument.close();
+
+    window._setContainer = function(imagePlayerInstance) {
+      imagePlayerInstance.setContainer(document.getElementById('video-container'));
+    };
+
   </script>
 
 

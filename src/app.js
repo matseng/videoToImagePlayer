@@ -137,7 +137,7 @@ Sugr.imageplayer = (function() {
         for(var i = 0; i < partialArrBase64.length - 1; i++) {
           if (window.URL && window.URL.createObjectURL && window.atob && Blob) {
             _imagesArrayType = 'url';
-            _imagesArray.push(_base64StringToImageUrl(partialArrBase64[i]));  //Note: about 130ms on MacBook Air 2012
+            _imagesArray.push(_base64StringToImageUrl(partialArrBase64[i]));
           } else {
             _imagesArrayType = 'base64';
             _imagesArray.push(partialArrBase64[i]);
@@ -183,10 +183,9 @@ Sugr.imageplayer = (function() {
 (function run() {
   var scriptURL = _getScriptURL();
   var queryObj = _queryStringToObject(scriptURL);
-  window.__im = new Sugr.imageplayer(queryObj.url, queryObj.fps, queryObj.width);
-  window.parent.__setContainer();
-  console.log('__im loaded and set container');
-  __im.autoplay();
+  var im = new Sugr.imageplayer(queryObj.url, queryObj.fps, queryObj.width);
+  window.parent._setContainer(im);
+  im.autoplay();
 
   function _getScriptURL() {
     var scripts = document.getElementsByTagName('script');
