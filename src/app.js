@@ -43,16 +43,17 @@ Sugr.imageplayer = (function() {
     _imageEl = document.createElement('img');
     _imageEl.id = "imageFromVideo";
     _imageEl.width = this.width;
-    _imageEl.style.position = 'absolute';
+    //_imageEl.style.position = 'absolute';
     _imageEl.style.left = _videoEl.offsetLeft;
     _imageEl.style.top = _videoEl.offsetTop;
     _containerEl.appendChild(_imageEl);
-    _imageEl.addEventListener('click', _onclick.bind(this));
+    _imageEl.addEventListener('touchstart', _onclick.bind(this));
     console.log('append image element');
   };
 
   function _onclick() {
-    _videoEl.currentTime = 1 / this.fps * (_frameIndex - 2);
+    console.log("ONCLICK", _videoEl);
+    //_videoEl.currentTime = 1 / this.fps * (_frameIndex - 2);
     _videoEl.play();
     _imageEl.style.transition = "1s"    
     window.requestAnimationFrame(function() {
