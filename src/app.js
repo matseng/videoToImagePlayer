@@ -55,24 +55,25 @@ Sugr.imageplayer = (function() {
     var self = this;
     
     var seekHandler = function() {
-      console.log('PROGRESS and SEEK EVENT')
+      console.log('PROGRESS and SEEK EVENT');
       _videoEl.currentTime = 1 / self.fps * (_frameIndex - 2);;
-      _videoEl.removeEventListener('progress', seekHandler);
+      _imagesArray[_imagesArray.length - 1];
+      _videoEl.removeEventListener('progress', seekHandler, false);
     };
 
     _videoEl.addEventListener('play', function() {
       _videoEl.addEventListener('canplaythrough', function() {
-        progressListener = _videoEl.addEventListener('progress', seekHandler);
+        progressListener = _videoEl.addEventListener('progress', seekHandler, false);
       });
     });
 
     _videoEl.play();
     
-    _imageEl.style.transition = "1s"    
-    window.requestAnimationFrame(function() {
-      _imagesArray[_imagesArray.length - 1];
-      setTimeout(function() {_clicked = true;}, 1000);
-    }.bind(this));
+    // _imageEl.style.transition = "1s"    
+    // window.requestAnimationFrame(function() {
+    //   _imagesArray[_imagesArray.length - 1];
+    //   setTimeout(function() {_clicked = true;}, 1000);
+    // }.bind(this));
   };
 
   function _autoplay() {
