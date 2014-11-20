@@ -42,23 +42,81 @@ Sugr.imageplayer = (function() {
   function _appendImageElement(imgString) {
     _imageEl = document.createElement('img');
     _imageEl.id = "imageFromVideo";
-    _imageEl.width = this.width;
-    _imageEl.style.position = 'absolute';
+    _imageEl.style.width = this.width;
+    // _imageEl.style.position = 'absolute';
+    _imageEl.style.position = 'relative';
     _imageEl.style.left = _videoEl.offsetLeft;
     _imageEl.style.top = _videoEl.offsetTop;
     _containerEl.appendChild(_imageEl);
-    _imageEl.addEventListener('click', _onclick.bind(this));
+    _imageEl.addEventListener('touchstart', touchStart.bind(this), false);
+    _imageEl.addEventListener('mousedown', touchStart.bind(this), false);
+
+    function touchStart(event) {
+      _videoEl.style.position = 'relative';
+      _videoEl.style.top = '100px'
+    };
+    // debugger
+    // _videoEl.addEventListener('click', _onclick.bind(this));
+    //_videoEl.addEventListener('play', _onclick.bind(this));
+    _videoEl.addEventListener('play-NADA', function() {
+      _videoEl.addEventListener('canplaythrough', function() {
+        _videoEl.addEventListener('progress', function() {
+          console.log("progress");
+          var _videoEl2 = _containerEl.getElementsByTagName('video')[0];
+          _videoEl2.pause();
+          _videoEl2.currentTime = 1 / this.fps * (_frameIndex - 2);
+        });
+      });
+    });
+
+
+      // console.log(_videoEl.readyState);
+      // console.log(_videoEl.seekable);
+      // debugger
+      // // debugger  
+      // _videoEl.pause();
+      // debugger
+  
+    // console.log("Listening for can play");
+    // _videoEl.addEventListener('canplay',function() {
+    //   console.log("Video can play ");
+    // });
+    // _videoEl.addEventListener('canplaythrough',function() {
+    //   console.log("canplaythrough");
+    //   _videoEl.currentTime = 10;
+
+    // });
+    _imageEl.addEventListener('click', function() {
+      _videoEl.src = _videoEl.src + "#t=10,15"; 
+      // _videoEl.play();
+      // var mediaController = _videoEl.controller;
+      // mediaController.play();
+    });
     console.log('append image element');
   };
 
-  function _onclick() {
-    _videoEl.currentTime = 1 / this.fps * (_frameIndex - 2);
-    _videoEl.play();
-    _imageEl.style.transition = "1s"    
-    window.requestAnimationFrame(function() {
-      _imageEl.style.visibility = 'hidden';
-      setTimeout(function() {_clicked = true;}, 1000);
-    }.bind(this));
+  function _onclick(event) {
+    // _videoEl.pause();
+    // debugger
+    // var mediaController = _videoEl.controller;
+    // mediaController.addEventListener('play', function(event) {
+      // console.log(event);
+      // mediaController.currentTime = 1 / this.fps * (_frameIndex - 2);
+      // mediaController.pause();
+    // });
+    // _videoEl.style.visibility = 'visible';
+    // mediaController.currentTime = 1 / this.fps * (_frameIndex - 2);
+    // mediaController.play();
+    // mediaController.pause();
+    // debugger
+    // mediaController.currentTime = 1 / this.fps * (_frameIndex - 2);
+    // _videoEl.pause();
+    // debugger
+    // _imageEl.style.transition = "1s"    
+    // window.requestAnimationFrame(function() {
+    //   _imageEl.style.visibility = 'hidden';
+    //   setTimeout(function() {_clicked = true;}, 1000);
+    // }.bind(this));
   };
 
   function _autoplay() {
@@ -157,8 +215,8 @@ Sugr.imageplayer = (function() {
 
   var ImagePlayer = function(url, fps, width, frameCount) {
     this.url = url;
-    this.fps = fps;
-    this.frameCount = frameCount;
+    this.fps = parseInt(fps);
+    this.frameCount = parseInt(frameCount);
     this.width =  width;
   };
 
@@ -172,6 +230,8 @@ Sugr.imageplayer = (function() {
       _containerEl = containerEl;
       if(_containerEl.style.position === "") _containerEl.style.position = 'relative'
       _videoEl = containerEl.getElementsByTagName('video')[0];
+      _videoEl2 = containerEl.getElementsByTagName('video')[1];
+      // _videoEl.style.visibility = 'hidden';
     },
   };
 
