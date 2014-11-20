@@ -51,31 +51,27 @@ Sugr.imageplayer = (function() {
 
   function _onclick() {
     console.log("ONCLICK", _videoEl);
-
     var self = this;
     
     var seekHandler = function() {
-      console.log('PROGRESS and SEEK EVENT');
       _videoEl.currentTime = 1 / self.fps * (_frameIndex - 2);
-      _frameIndex = _imagesArray.length - 1;
-      setTimeout(function() {_clicked = true;}, 1000);
-      if (_imagesArrayType === 'base64') _imageEl.src = "data:image/jpeg;base64," + _imagesArray[_frameIndex];
-      if (_imagesArrayType === 'url') _imageEl.src = _imagesArray[_frameIndex];
+      setTimeout(function() {
+        _clicked = true;
+        _frameIndex = _imagesArray.length - 1;
+        if (_imagesArrayType === 'base64') _imageEl.src = "data:image/jpeg;base64," + _imagesArray[_frameIndex];
+        if (_imagesArrayType === 'url') _imageEl.src = _imagesArray[_frameIndex];
+      }, 1000);
+      _videoEl.removeEventListener('progress', seekHandler, false);
+      console.log('PROGRESS and SEEK EVENT');
     };
 
     _videoEl.addEventListener('play', function() {
       _videoEl.addEventListener('canplaythrough', function() {
-        progressListener = _videoEl.addEventListener('progress', seekHandler, false);
+        _videoEl.addEventListener('progress', seekHandler, false);
       });
     });
 
     _videoEl.play();
-    
-    // _imageEl.style.transition = "1s"    
-    // window.requestAnimationFrame(function() {
-    //   _imagesArray[_imagesArray.length - 1];
-    //   setTimeout(function() {_clicked = true;}, 1000);
-    // }.bind(this));
   };
 
   function _autoplay() {
