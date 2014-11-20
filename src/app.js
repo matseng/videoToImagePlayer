@@ -55,12 +55,9 @@ Sugr.imageplayer = (function() {
     
     var seekHandler = function() {
       _videoEl.currentTime = 1 / self.fps * (_frameIndex - 2);
-      setTimeout(function() {
-        _clicked = true;
-        _frameIndex = _imagesArray.length - 1;
-        if (_imagesArrayType === 'base64') _imageEl.src = "data:image/jpeg;base64," + _imagesArray[_frameIndex];
-        if (_imagesArrayType === 'url') _imageEl.src = _imagesArray[_frameIndex];
-      }, 1000);
+      _clicked = true;
+      if (_imagesArrayType === 'base64') _imageEl.src = "data:image/jpeg;base64," + _imagesArray[_imagesArray.length - 1];
+      if (_imagesArrayType === 'url') _imageEl.src = _imagesArray[_imagesArray.length - 1];
       _videoEl.removeEventListener('progress', seekHandler, false);
       console.log('PROGRESS and SEEK EVENT');
     };
