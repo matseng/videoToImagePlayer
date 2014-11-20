@@ -56,7 +56,8 @@ Sugr.imageplayer = (function() {
     
     var seekHandler = function() {
       console.log('PROGRESS and SEEK EVENT');
-      _videoEl.currentTime = 1 / self.fps * (_frameIndex - 2);;
+      _videoEl.currentTime = 1 / self.fps * (_frameIndex - 2);
+      setTimeout(function() {_clicked = true;}, 1000);
       _imagesArray[_imagesArray.length - 1];
       _videoEl.removeEventListener('progress', seekHandler, false);
     };
