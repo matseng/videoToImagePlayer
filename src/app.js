@@ -59,7 +59,8 @@ Sugr.imageplayer = (function() {
       _videoEl.currentTime = 1 / self.fps * (_frameIndex - 2);
       _frameIndex = _imagesArray.length - 1;
       setTimeout(function() {_clicked = true;}, 1000);
-      _videoEl.removeEventListener('progress', seekHandler, false);
+      if (_imagesArrayType === 'base64') _imageEl.src = "data:image/jpeg;base64," + _imagesArray[_frameIndex];
+      if (_imagesArrayType === 'url') _imageEl.src = _imagesArray[_frameIndex];
     };
 
     _videoEl.addEventListener('play', function() {
