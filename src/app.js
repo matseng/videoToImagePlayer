@@ -63,8 +63,9 @@ Sugr.imageplayer = (function() {
 
   function _onclick() {
     console.log("ONCLICK", _videoEl);
-    _audio.element.play();
     var self = this;
+    _audio.element.currentTime = 1 / self.fps * (_frameIndex - 2);
+    _audio.element.play();
     
     var seekHandler = function() {
       _videoEl.currentTime = 1 / self.fps * (_frameIndex - 2);
@@ -109,7 +110,7 @@ Sugr.imageplayer = (function() {
         var div = document.createElement('div');
         _audio.element = document.createElement('audio');
         _audio.element.setAttribute('controls', true);
-        _audio.element.setAttribute('autoplay', true);
+        // _audio.element.setAttribute('autoplay', true);
         _audio.element.src = _audio.srcPrefix + _audio.src;
         // _audio.element.src = _base64StringToImageUrl(_audio.src, 'audio/aac');
         div.appendChild(_audio.element);
