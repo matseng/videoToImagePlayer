@@ -5,8 +5,9 @@ Sugr.imageplayer = (function() {
   var _audio = {
     src: "",
     // srcPrefix: "data:audio/aac;base64,",
-    srcPrefix: "data:audio/ogg;base64,",
+    srcPrefix: "data:audio/mp3;base64,",
     array: [""],
+    element: null,
 
   };
 
@@ -25,7 +26,7 @@ Sugr.imageplayer = (function() {
     }
 
     function render() {
-      if (this.frameCount && _frameIndex == this.frameCount) return;
+      if (this.frameCount && _frameIndex === this.frameCount) return;
       if ( this.frameCount && _frameIndex === _imagesArray.length) {
         _paused = true;
         console.log("PAUSED to buffer download");
@@ -41,7 +42,7 @@ Sugr.imageplayer = (function() {
       }.bind(this), 1000 / this.fps);
       if (_imagesArrayType === 'base64') _imageEl.src = "data:image/jpeg;base64," + _imagesArray[_frameIndex];
       if (_imagesArrayType === 'url') _imageEl.src = _imagesArray[_frameIndex];
-      _imagesArray[_frameIndex] = null;
+      // _imagesArray[_frameIndex] = null;
     };    
     render.call(this);
   };
@@ -50,6 +51,10 @@ Sugr.imageplayer = (function() {
     _imageEl = document.createElement('img');
     _imageEl.id = "imageFromVideo";
     _imageEl.width = this.width;
+    _imageEl.style.position = 'absolute';
+    _imageEl.style.top = '0px';
+    _imageEl.style.left = '0px';
+
     _containerEl.appendChild(_imageEl);
     // _imageEl.addEventListener('touchstart', _onclick.bind(this));
     _imageEl.addEventListener('click', _onclick.bind(this));
@@ -58,6 +63,7 @@ Sugr.imageplayer = (function() {
 
   function _onclick() {
     console.log("ONCLICK", _videoEl);
+    _audio.element.play();
     var self = this;
     
     var seekHandler = function() {
@@ -100,12 +106,14 @@ Sugr.imageplayer = (function() {
 
       oncomplete: function() {
         // debugger
-        var a = document.createElement('audio');
-        a.setAttribute('controls', true);
-        a.setAttribute('autoplay', true);
-        // a.src = _audio.srcPrefix + _audio.src;
-        a.src = _base64StringToImageUrl(_audio.src, 'audio/aac');
-        _containerEl.appendChild(a);
+        var div = document.createElement('div');
+        _audio.element = document.createElement('audio');
+        _audio.element.setAttribute('controls', true);
+        _audio.element.setAttribute('autoplay', true);
+        _audio.element.src = _audio.srcPrefix + _audio.src;
+        // _audio.element.src = _base64StringToImageUrl(_audio.src, 'audio/aac');
+        div.appendChild(_audio.element);
+        _containerEl.appendChild(div);
         // this.frameCount = _imagesArray.length;
       }.bind(this),
 
@@ -183,18 +191,22 @@ Sugr.imageplayer = (function() {
     return function(oEvent) {
       if (oEvent.type && this.xhr.responseText.length) {
         end = this.xhr.responseText.length;
+        console.log(start, end);
         chunk = this.xhr.responseText.substring(start, end);
         partialArrBase64 = _split(remainder + chunk);
         for(var i = 0; i < partialArrBase64.length - 1; i++) {
-          if (window.URL && window.URL.createObjectURL && window.atob && Blob) {
+          if (false && window.URL && window.URL.createObjectURL && window.atob && Blob) {
+            debugger
             _imagesArrayType = 'url';
             result.push(callback(partialArrBase64[i], 'image/jpg'));
           } else {
             _imagesArrayType = 'base64';
             result.push(partialArrBase64[i]);
+            // console.log(result.length);
           }
         }
         remainder = partialArrBase64[partialArrBase64.length - 1];
+        partialArrBase64 = null;
         start = end;
         if(chunkIndex === 0 || _paused) {
           _paused = false;

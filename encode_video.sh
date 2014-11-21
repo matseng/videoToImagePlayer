@@ -1,5 +1,5 @@
 #!/bin/bash
-rm data/base64Images
+rm data/base64ImagesMySpace
 rm videos/*.jpeg
 # ffmpeg -i qa.mp4 -r 30 -vf scale=1280:-1 -qscale:v 1 thumbnails-%05d.jpeg
 ffmpeg -i videos/myspace.mp4 -r 23 -vf scale=640:-1 -qscale:v 15 videos/thumbnails-%05d.jpeg
