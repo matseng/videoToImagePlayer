@@ -28,7 +28,7 @@ Sugr.imageplayer = (function() {
 
     function render() {
       if (this.frameCount && _frameIndex === this.frameCount) return;
-      if ( this.frameCount && _frameIndex === _imagesArray.length) {
+      if ( !this.frameCount && _frameIndex === _imagesArray.length) {
         _paused = true;
         console.log("PAUSED to buffer download");
         return;
@@ -223,14 +223,16 @@ Sugr.imageplayer = (function() {
             result.push(partialArrBase64[i]);
           }
         }
-        remainder = partialArrBase64[partialArrBase64.length - 1];
-        partialArrBase64 = null;
-        start = end;
-        if(chunkIndex === 0 || _paused) {
+        if(chunkIndex === 0 || ( _paused )) {
+        // if(chunkIndex === 0 || (_paused && partialArrBase64.length > 23)) {
+          console.log(partialArrBase64.length);
           _paused = false;
           _play.call(this);
         }
+        remainder = partialArrBase64[partialArrBase64.length - 1];
+        start = end;
         chunkIndex++;
+        partialArrBase64 = null;
       }
     };
   };
