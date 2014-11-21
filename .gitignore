@@ -3,6 +3,6 @@ node_modules
 videos/*.jpeg
 !videos/myspace.mp4
 !base64ImagesMySpace
-!data/*
-data/base64MySpaceAudio
-data/base64ImagesMySpace
+data/*
+*data/base64ImagesMySpace
+*data/base64MySpaceAudio
