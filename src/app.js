@@ -110,28 +110,28 @@ Sugr.imageplayer = (function() {
       onerror: function() {},
     }, this.url);
 
-    _load.call(this, {
-      onsend: function() {
-      }.bind(this),
+    // _load.call(this, {
+    //   onsend: function() {
+    //   }.bind(this),
 
-      onprogress: _updateProgressConstructorAudio(null, _audio, 'audio').bind(this),
+    //   onprogress: _updateProgressConstructorAudio(null, _audio, 'audio').bind(this),
 
-      oncomplete: function() {
-        // debugger
-        var div = document.createElement('div');
-        _audio.element = document.createElement('audio');
-        _audio.element.setAttribute('controls', true);
-        // _audio.element.setAttribute('autoplay', true);
-        _audio.element.src = _audio.srcPrefix + _audio.src;
-        // _audio.element.src = _base64StringToImageUrl(_split(_audio.src), 'audio/aac');
-        _audio.element.src = _base64StringToImageUrl(_split(_audio.src), 'audio/aac');
-        div.appendChild(_audio.element);
-        // _containerEl.appendChild(div);
-        // this.frameCount = _imagesArray.length;
-      }.bind(this),
+    //   oncomplete: function() {
+    //     // debugger
+    //     var div = document.createElement('div');
+    //     _audio.element = document.createElement('audio');
+    //     _audio.element.setAttribute('controls', true);
+    //     // _audio.element.setAttribute('autoplay', true);
+    //     _audio.element.src = _audio.srcPrefix + _audio.src;
+    //     // _audio.element.src = _base64StringToImageUrl(_split(_audio.src), 'audio/aac');
+    //     _audio.element.src = _base64StringToImageUrl(_split(_audio.src), 'audio/aac');
+    //     div.appendChild(_audio.element);
+    //     // _containerEl.appendChild(div);
+    //     // this.frameCount = _imagesArray.length;
+    //   }.bind(this),
 
-      onerror: function() {},
-    }, 'data/base64MySpaceAudio', _audio);
+    //   onerror: function() {},
+    // }, 'data/base64MySpaceAudio', _audio);
 
   };
 
