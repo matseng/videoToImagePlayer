@@ -209,7 +209,6 @@ Sugr.imageplayer = (function() {
     return function(oEvent) {
       if (oEvent.type && this.xhr.responseText.length) {
         end = this.xhr.responseText.length;
-        console.log(start, end);
         chunk = this.xhr.responseText.substring(start, end);
         partialArrBase64 = _split(remainder + chunk);
         for(var i = 0; i < partialArrBase64.length - 1; i++) {
@@ -220,7 +219,6 @@ Sugr.imageplayer = (function() {
           } else {
             _imagesArrayType = 'base64';
             result.push(partialArrBase64[i]);
-            // console.log(result.length);
           }
         }
         remainder = partialArrBase64[partialArrBase64.length - 1];
@@ -231,7 +229,6 @@ Sugr.imageplayer = (function() {
           _play.call(this);
         }
         chunkIndex++;
-        console.log(chunkIndex);
       }
     };
   };
