@@ -2,5 +2,7 @@ node_modules
 .DS_Store
 videos/*.jpeg
 !videos/myspace.mp4
-data
 !base64ImagesMySpace
+!data/*
+data/base64MySpaceAudio
+data/base64ImagesMySpace
