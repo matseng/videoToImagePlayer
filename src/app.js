@@ -121,12 +121,14 @@ Sugr.imageplayer = (function() {
         var div = document.createElement('div');
         _audio.element = document.createElement('audio');
         _audio.element.setAttribute('controls', true);
+        div.style.position = 'relative';
+        div.style.top ='400px';
         // _audio.element.setAttribute('autoplay', true);
         _audio.element.src = _audio.srcPrefix + _audio.src;
         // _audio.element.src = _base64StringToImageUrl(_split(_audio.src), 'audio/aac');
         _audio.element.src = _base64StringToImageUrl(_split(_audio.src), 'audio/aac');
         div.appendChild(_audio.element);
-        // _containerEl.appendChild(div);
+        _containerEl.appendChild(div);
         // this.frameCount = _imagesArray.length;
       }.bind(this),
 
