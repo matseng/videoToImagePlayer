@@ -109,14 +109,19 @@ Sugr.imageplayer = (function() {
       }.bind(this),
 
       onerror: function() {},
-    }, 'data/base64MySpaceAudio');
+    }, 'data/base64MySpaceAudio', _audio);
 
   };
 
-  function _load(eventHandler, url) {
-    url = this.url || url
-    var xhr;
-    this.xhr = xhr = new XMLHttpRequest();
+  function _load(eventHandler, url, obj) {
+    // url = this.url || url
+    var xhr = new XMLHttpRequest();
+    if (!obj) {
+      this.xhr = xhr;
+    } else {
+      debugger
+      obj.xhr = xhr;
+    }
 
     xhr.open('GET', url, true);
     
@@ -209,9 +214,9 @@ Sugr.imageplayer = (function() {
     var chunkIndex = 0;
     var remainder = '';
     return function(oEvent) {
-      if (oEvent.type && this.xhr.responseText.length) {
-        end = this.xhr.responseText.length;
-        chunk = this.xhr.responseText.substring(start, end);
+      if (oEvent.type && result.xhr.responseText.length) {
+        end = result.xhr.responseText.length;
+        chunk = result.xhr.responseText.substring(start, end);
         result.src += chunk;
         start = end;
 
