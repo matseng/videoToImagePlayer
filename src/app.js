@@ -4,8 +4,8 @@ Sugr.imageplayer = (function() {
   var _imagesArray = [""], _imagesArrayType, _frameIndex = 0, _containerEl, _videoEl, _imageEl, _clicked, _paused, _timerStart; 
   var _audio = {
     src: "",
-    // srcPrefix: "data:audio/aac;base64,",
-    srcPrefix: "data:audio/mp3;base64,",
+    srcPrefix: "data:audio/aac;base64,",
+    // srcPrefix: "data:audio/mp3;base64,",
     // srcPrefix: "data:audio/wav;base64,",
     array: [""],
     element: null,
@@ -124,7 +124,7 @@ Sugr.imageplayer = (function() {
         // _audio.element.setAttribute('autoplay', true);
         // _audio.element.src = _audio.srcPrefix + _audio.src;
         // _audio.element.src = _base64StringToImageUrl(_split(_audio.src), 'audio/aac');
-        _audio.element.src = _base64StringToImageUrl(_split(_audio.src), 'audio/mp3');
+        _audio.element.src = _base64StringToImageUrl(_split(_audio.src), 'audio/aac');
         div.appendChild(_audio.element);
         _containerEl.appendChild(div);
         // this.frameCount = _imagesArray.length;
@@ -178,8 +178,13 @@ Sugr.imageplayer = (function() {
       bitArr[i] = decodedData.charCodeAt(i);  // unsigned 8 bit integer
     }
     var blob = new Blob([bitArr], {type: type});
-    var imgUrl = window.URL.createObjectURL(blob);
-    return imgUrl;
+    var mediaURL;
+    if (window.webkitURL) {
+      mediaURL = window.webkitURL.createObjectURL(blob);
+    } else {
+      mediaURL = window.URL.createObjectURL(blob);
+    }
+    return mediaURL;
   };
 
   function _base64StringToAac(base64Str) {
