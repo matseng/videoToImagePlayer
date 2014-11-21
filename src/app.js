@@ -73,7 +73,8 @@ Sugr.imageplayer = (function() {
   function _onclick() {
     console.log("ONCLICK", _videoEl);
     var self = this;
-    _audio.element.currentTime = 1 / self.fps * (_frameIndex - 2);
+    // _audio.element.currentTime = 1 / self.fps * (_frameIndex - 2);
+    _audio.element.currentTime = 1 / self.fps * (_frameIndex);
     // _audio.element.addEventListener('playing', function() {
     //   _audio.element.addEventListener('canplaythrough', function() {
     //       _audio.element.currentTime = 1 / self.fps * (_frameIndex - 2);
