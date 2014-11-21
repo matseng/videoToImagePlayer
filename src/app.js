@@ -52,7 +52,7 @@ Sugr.imageplayer = (function() {
     _imageEl = document.createElement('img');
     _imageEl.id = "imageFromVideo";
     _imageEl.width = this.width;
-    // _imageEl.style.position = 'absolute';
+    _imageEl.style.position = 'absolute';
     _imageEl.style.top = '0px';
     _imageEl.style.left = '0px';
 
