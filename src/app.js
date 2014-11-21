@@ -6,6 +6,7 @@ Sugr.imageplayer = (function() {
     src: "",
     // srcPrefix: "data:audio/aac;base64,",
     srcPrefix: "data:audio/mp3;base64,",
+    // srcPrefix: "data:audio/wav;base64,",
     array: [""],
     element: null,
 
@@ -51,7 +52,7 @@ Sugr.imageplayer = (function() {
     _imageEl = document.createElement('img');
     _imageEl.id = "imageFromVideo";
     _imageEl.width = this.width;
-    _imageEl.style.position = 'absolute';
+    // _imageEl.style.position = 'absolute';
     _imageEl.style.top = '0px';
     _imageEl.style.left = '0px';
 
@@ -65,8 +66,18 @@ Sugr.imageplayer = (function() {
     console.log("ONCLICK", _videoEl);
     var self = this;
     _audio.element.currentTime = 1 / self.fps * (_frameIndex - 2);
+    // _audio.element.addEventListener('playing', function() {
+    //   _audio.element.addEventListener('canplaythrough', function() {
+    //       _audio.element.currentTime = 1 / self.fps * (_frameIndex - 2);
+
+    //     _audio.element.addEventListener('progress', function() {
+    //       console.log('SET currentTime');
+    //       _audio.element.currentTime = 1 / self.fps * (_frameIndex - 2);
+    //     }, false);
+    //   });
+    // });
     _audio.element.play();
-    
+
     // var seekHandler = function() {
     //   _videoEl.currentTime = 1 / self.fps * (_frameIndex - 2);
     //   _clicked = true;
@@ -111,8 +122,9 @@ Sugr.imageplayer = (function() {
         _audio.element = document.createElement('audio');
         _audio.element.setAttribute('controls', true);
         // _audio.element.setAttribute('autoplay', true);
-        _audio.element.src = _audio.srcPrefix + _audio.src;
-        // _audio.element.src = _base64StringToImageUrl(_audio.src, 'audio/aac');
+        // _audio.element.src = _audio.srcPrefix + _audio.src;
+        // _audio.element.src = _base64StringToImageUrl(_split(_audio.src), 'audio/aac');
+        _audio.element.src = _base64StringToImageUrl(_split(_audio.src), 'audio/mp3');
         div.appendChild(_audio.element);
         _containerEl.appendChild(div);
         // this.frameCount = _imagesArray.length;
