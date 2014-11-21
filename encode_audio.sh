@@ -9,5 +9,5 @@ ffmpeg -i videos/myspace.mp4 -strict -2 audio/myspace.aac
 # do
 # echo "Processing $f file..."
 # take action on each file. $f store current file name
-base64 audio/myspace.aac >> data/base64MySpaceAudio
+base64 audio/myspace.aac > data/base64MySpaceAudio
 # done
