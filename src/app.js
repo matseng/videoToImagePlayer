@@ -126,7 +126,7 @@ Sugr.imageplayer = (function() {
         // _audio.element.src = _base64StringToImageUrl(_split(_audio.src), 'audio/aac');
         _audio.element.src = _base64StringToImageUrl(_split(_audio.src), 'audio/aac');
         div.appendChild(_audio.element);
-        _containerEl.appendChild(div);
+        // _containerEl.appendChild(div);
         // this.frameCount = _imagesArray.length;
       }.bind(this),
 
