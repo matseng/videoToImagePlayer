@@ -25,8 +25,11 @@ Sugr.imageplayer = (function() {
     if( !_imageEl) {
       _appendImageElement.call(this);
     }
+    _audio.element.play();
 
-    function render() {
+
+    function render(delta) {
+      delta = delta || 0;
       if (this.frameCount && _frameIndex === this.frameCount) return;
       if ( !this.frameCount && _frameIndex === _imagesArray.length) {
         _paused = true;
@@ -37,10 +40,20 @@ Sugr.imageplayer = (function() {
         return;
       }
 
+      // delta = 1 / this.fps * _frameIndex - _audio.element.currentTime;
+      var actualFps = _frameIndex / _audio.element.currentTime;
+      var expectedFps = this.fps;
+      // console.log(actualFps, expectedFps);
+      var delta = actualFps - expectedFps;
+      if (isNaN(delta) || !isFinite(delta) ) delta = 0;
+      console.log(delta);
+
       setTimeout(function() {
+        // console.log(1 / this.fps * _frameIndex + delta, _audio.element.currentTime);
         _frameIndex++;
         window.requestAnimationFrame(render.bind(this));
-      }.bind(this), 1000 / this.fps);
+      }.bind(this), 1000 / this.fps + expectedFps * delta);
+      // }.bind(this), 1000 / this.fps + 1 / expectedFps * delta);
       if (_imagesArrayType === 'base64') _imageEl.src = "data:image/jpeg;base64," + _imagesArray[_frameIndex];
       if (_imagesArrayType === 'url') _imageEl.src = _imagesArray[_frameIndex];
       // _imagesArray[_frameIndex] = null;
