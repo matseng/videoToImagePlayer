@@ -179,11 +179,11 @@ Sugr.imageplayer = (function() {
     }
     var blob = new Blob([bitArr], {type: type});
     var mediaURL;
-    if (window.webkitURL) {
-      mediaURL = window.webkitURL.createObjectURL(blob);
-    } else {
+    // if (window.webkitURL) {
+      // mediaURL = window.webkitURL.createObjectURL(blob);
+    // } else {
       mediaURL = window.URL.createObjectURL(blob);
-    }
+    // }
     return mediaURL;
   };
 
