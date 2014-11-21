@@ -67,22 +67,22 @@ Sugr.imageplayer = (function() {
     _audio.element.currentTime = 1 / self.fps * (_frameIndex - 2);
     _audio.element.play();
     
-    var seekHandler = function() {
-      _videoEl.currentTime = 1 / self.fps * (_frameIndex - 2);
-      _clicked = true;
-      if (_imagesArrayType === 'base64') _imageEl.src = "data:image/jpeg;base64," + _imagesArray[_imagesArray.length - 1];
-      if (_imagesArrayType === 'url') _imageEl.src = _imagesArray[_imagesArray.length - 1];
-      _videoEl.removeEventListener('progress', seekHandler, false);
-      console.log('PROGRESS and SEEK EVENT');
-    };
+    // var seekHandler = function() {
+    //   _videoEl.currentTime = 1 / self.fps * (_frameIndex - 2);
+    //   _clicked = true;
+    //   if (_imagesArrayType === 'base64') _imageEl.src = "data:image/jpeg;base64," + _imagesArray[_imagesArray.length - 1];
+    //   if (_imagesArrayType === 'url') _imageEl.src = _imagesArray[_imagesArray.length - 1];
+    //   _videoEl.removeEventListener('progress', seekHandler, false);
+    //   console.log('PROGRESS and SEEK EVENT');
+    // };
 
-    _videoEl.addEventListener('play', function() {
-      _videoEl.addEventListener('canplaythrough', function() {
-        _videoEl.addEventListener('progress', seekHandler, false);
-      });
-    });
+    // _videoEl.addEventListener('play', function() {
+    //   _videoEl.addEventListener('canplaythrough', function() {
+    //     _videoEl.addEventListener('progress', seekHandler, false);
+    //   });
+    // });
 
-    _videoEl.play();
+    // _videoEl.play();
   };
 
   function _autoplay() {
@@ -271,7 +271,7 @@ Sugr.imageplayer = (function() {
     setContainer: function(containerEl) {
       _containerEl = containerEl;
       if(_containerEl.style.position === "") _containerEl.style.position = 'relative'
-      _videoEl = containerEl.getElementsByTagName('video')[0];
+      // _videoEl = containerEl.getElementsByTagName('video')[0];
     },
   };
 
