@@ -102,8 +102,9 @@ Sugr.imageplayer = (function() {
         // debugger
         var a = document.createElement('audio');
         a.setAttribute('controls', true);
-        a.src = _audio.srcPrefix + _audio.src;
-        // a.src = _base64StringToAac(_audio.src, 'audio/aac');
+        a.setAttribute('autoplay', true);
+        // a.src = _audio.srcPrefix + _audio.src;
+        a.src = _base64StringToImageUrl(_audio.src, 'audio/aac');
         _containerEl.appendChild(a);
         // this.frameCount = _imagesArray.length;
       }.bind(this),
@@ -119,7 +120,6 @@ Sugr.imageplayer = (function() {
     if (!obj) {
       this.xhr = xhr;
     } else {
-      debugger
       obj.xhr = xhr;
     }
 
@@ -163,8 +163,8 @@ Sugr.imageplayer = (function() {
 
   function _base64StringToAac(base64Str) {
     debugger
-    var decodedData = window.atob(base64Str);  // decode base64 string to an octet aka character (see http://en.wikipedia.org/wiki/Base64)
-    var bitArr = new Uint8Array(new ArrayBuffer(decodedData.length));  // initialize array: each char corresponds to 8 bits that will compose an image
+    var decodedData = window.atob(base64Str);  // decode base64 string to an octet string (see http://en.wikipedia.org/wiki/Base64)
+    var bitArr = new Uint8Array(new ArrayBuffer(decodedData.length));  // initialize array: each octet character corresponds to 8 bits that will compose an image
     for(var i = 0; i < decodedData.length; i++) {
       bitArr[i] = decodedData.charCodeAt(i);  // unsigned 8 bit integer
     }
