@@ -4,9 +4,7 @@ Sugr.imageplayer = (function() {
   var _imagesArray = [""], _imagesArrayType, _frameIndex = 0, _containerEl, _videoEl, _imageEl, _clicked, _paused, _timerStart; 
   var _audio = {
     src: "",
-    // srcPrefix: "data:audio/aac;base64,",
     srcPrefix: "data:audio/mp3;base64,",
-    // srcPrefix: "data:audio/wav;base64,",
     array: [""],
     element: null,
 
@@ -22,14 +20,13 @@ Sugr.imageplayer = (function() {
 
   function _play() {
     var expectedFps;
-    if (window.performance && _timerStart) console.log(window.performance.now() - _timerStart);
+    // if (window.performance && _timerStart) console.log(window.performance.now() - _timerStart);
     if( !_imageEl) {
       _appendImageElement.call(this);
     }
 
     function render(delta) {
       delta = delta || 0;
-      if (this.frameCount && _frameIndex === this.frameCount) return;
       if ( !this.frameCount && _frameIndex === _imagesArray.length) {
         _paused = true;
         console.log("PAUSED to buffer download");
@@ -43,6 +40,10 @@ Sugr.imageplayer = (function() {
         expectedFrameIndex = this.fps * _audio.element.currentTime;
         console.log(expectedFrameIndex, _frameIndex);
         if (expectedFrameIndex > _frameIndex) _frameIndex = Math.round(expectedFrameIndex);
+      }
+      console.log(_frameIndex);
+      if (this.frameCount && _frameIndex >= this.frameCount) {
+        return;
       }
 
       setTimeout(function() {
@@ -63,9 +64,7 @@ Sugr.imageplayer = (function() {
     _imageEl.style.position = 'absolute';
     _imageEl.style.top = '0px';
     _imageEl.style.left = '0px';
-
     _containerEl.appendChild(_imageEl);
-    // _imageEl.addEventListener('touchstart', _onclick.bind(this));
     _imageEl.addEventListener('click', _onclick.bind(this));
     console.log('append image element');
   };
@@ -73,36 +72,8 @@ Sugr.imageplayer = (function() {
   function _onclick() {
     console.log("ONCLICK", _videoEl);
     var self = this;
-    // _audio.element.currentTime = 1 / self.fps * (_frameIndex - 2);
     _audio.element.currentTime = 1 / self.fps * (_frameIndex);
-    // _audio.element.addEventListener('playing', function() {
-    //   _audio.element.addEventListener('canplaythrough', function() {
-    //       _audio.element.currentTime = 1 / self.fps * (_frameIndex - 2);
-
-    //     _audio.element.addEventListener('progress', function() {
-    //       console.log('SET currentTime');
-    //       _audio.element.currentTime = 1 / self.fps * (_frameIndex - 2);
-    //     }, false);
-    //   });
-    // });
     _audio.element.play();
-
-    // var seekHandler = function() {
-    //   _videoEl.currentTime = 1 / self.fps * (_frameIndex - 2);
-    //   _clicked = true;
-    //   if (_imagesArrayType === 'base64') _imageEl.src = "data:image/jpeg;base64," + _imagesArray[_imagesArray.length - 1];
-    //   if (_imagesArrayType === 'url') _imageEl.src = _imagesArray[_imagesArray.length - 1];
-    //   _videoEl.removeEventListener('progress', seekHandler, false);
-    //   console.log('PROGRESS and SEEK EVENT');
-    // };
-
-    // _videoEl.addEventListener('play', function() {
-    //   _videoEl.addEventListener('canplaythrough', function() {
-    //     _videoEl.addEventListener('progress', seekHandler, false);
-    //   });
-    // });
-
-    // _videoEl.play();
   };
 
   function _autoplay() {
@@ -222,9 +193,9 @@ Sugr.imageplayer = (function() {
         end = this.xhr.responseText.length;
         chunk = this.xhr.responseText.substring(start, end);
         partialArrBase64 = _split(remainder + chunk);
-        for(var i = 0; i < partialArrBase64.length - 1; i++) {
-          if (false && window.URL && window.URL.createObjectURL && window.atob && Blob) {
-            debugger
+        for(var i = 0; partialArrBase64.length > 1 && i < partialArrBase64.length - 1; i++) {
+        // for(var i = 0; i < partialArrBase64.length - 1; i++) {
+          if (window.URL && window.URL.createObjectURL && window.atob && Blob) {
             _imagesArrayType = 'url';
             result.push(callback(partialArrBase64[i], 'image/jpg'));
           } else {
@@ -232,15 +203,21 @@ Sugr.imageplayer = (function() {
             result.push(partialArrBase64[i]);
           }
         }
-        if(chunkIndex === 0 || ( _paused )) {
+        if(chunkIndex === 0 || ( _paused && result.length % this.fps === 0 )) {
         // if(chunkIndex === 0 || (_paused && partialArrBase64.length > 23)) {
-          console.log(partialArrBase64.length);
+          // console.log(partialArrBase64.length);
           _paused = false;
           _play.call(this);
         }
-        remainder = partialArrBase64[partialArrBase64.length - 1];
-        start = end;
-        chunkIndex++;
+        if(partialArrBase64.length > 1) {
+        // if(partialArrBase64.length > 2) {
+          remainder = partialArrBase64[partialArrBase64.length - 1];
+          start = end;
+          chunkIndex++;
+        } else {
+          console.log(partialArrBase64.length);
+          // remainder = remainder + chunk;
+        }
         partialArrBase64 = null;
       }
     };
