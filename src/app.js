@@ -77,7 +77,7 @@ Sugr.imageplayer = (function() {
     _audio.element.play();
     var width = parent.window.innerWidth;
     var height = parent.window.innerHeight;
-    console.log(width, height);
+    // console.log(width, height);
     _imageEl.width = height;
     _imageEl.height = width;
     _containerEl.style.position = 'fixed';
@@ -87,6 +87,8 @@ Sugr.imageplayer = (function() {
     _containerEl.style.height = width;
     var translateX = width / 2;
     var translateY = height / 2;
+    _containerEl.style.transition = '1s';
+    _imageEl.style.transition = '1s';
     _containerEl.style.webkitTransform = "translate(" + translateX + "px," + translateY + "px)" + "rotate(90deg)";
     _containerEl.style.transform = "translate(" + translateX + "px," + translateY + "px)" + "rotate(90deg)";
   };
