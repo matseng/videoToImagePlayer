@@ -73,7 +73,7 @@ Sugr.imageplayer = (function() {
   function _onclick() {
     console.log("ONCLICK", _videoEl);
     var self = this;
-    _audio.element.currentTime = 1 / self.fps * (_frameIndex);
+    if(_audio.element) _audio.element.currentTime = 1 / self.fps * (_frameIndex);
     _audio.element.play();
     var width = parent.window.innerWidth;
     var height = parent.window.innerHeight;
