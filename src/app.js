@@ -40,9 +40,10 @@ Sugr.imageplayer = (function() {
         _frameIndex++;
         window.requestAnimationFrame(render.bind(this));
       }.bind(this), 1000 / this.fps);
+      // _frameIndex = (_frameIndex >= _imagesArray.length) ? _imagesArray.length - 1 : _frameIndex;
       if (_imagesArrayType === 'base64') _imageEl.src = "data:image/jpeg;base64," + _imagesArray[_frameIndex];
       if (_imagesArrayType === 'url') _imageEl.src = _imagesArray[_frameIndex];
-      _imagesArray[_frameIndex] = null;
+      // _imagesArray[_frameIndex] = null;
     };    
     render.call(this);
   };
@@ -63,29 +64,31 @@ Sugr.imageplayer = (function() {
     var self = this;
     
     var seekHandler = function() {
-      _videoEl.currentTime = 1 / self.fps * (_frameIndex);
-      _clicked = true;
+      _videoEl.currentTime = 1 / self.fps * _frameIndex;
+      console.log('seekhandler: ', _videoEl.currentTime);
       if (_imagesArrayType === 'base64') _imageEl.src = "data:image/jpeg;base64," + _imagesArray[_imagesArray.length - 1];
       if (_imagesArrayType === 'url') _imageEl.src = _imagesArray[_imagesArray.length - 1];
-      _videoEl.removeEventListener('progress', seekHandler, false);
+      // _videoEl.removeEventListener('progress', seekHandler, false);
       console.log('PROGRESS and SEEK EVENT');
     };
-    if (!initialized) {
-      initialized = true;    
       _videoEl.addEventListener('play', function() {
         _videoEl.addEventListener('canplaythrough', function() {
-          _videoEl.addEventListener('progress', seekHandler, false);
-          _videoEl.addEventListener('webkitendfullscreen', onPlayerExitFullscreen.bind(self), false);
+          if( !initialized ) {
+            initialized = true;    
+            console.log('HERE');
+            _videoEl.addEventListener('progress', seekHandler, false);
+            _videoEl.addEventListener('webkitendfullscreen', onPlayerExitFullscreen.bind(self), false);
+          }
         });
       });
-    }
-
+    if (_videoEl.currentTime) _videoEl.currentTime = 1 / self.fps * _frameIndex;
     _videoEl.play();
+    _clicked = true;
   };
 
   function onPlayerExitFullscreen() {
-    var currentTime = _videoEl.currentTime;
-    _frameIndex = Math.round(this.fps * currentTime);
+    // var currentTime = _videoEl.currentTime;
+    _frameIndex = Math.round(this.fps * _videoEl.currentTime);
     console.log(_frameIndex);
     _clicked = false;
     _play.call(this);
