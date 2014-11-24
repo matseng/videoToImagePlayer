@@ -85,8 +85,8 @@ Sugr.imageplayer = (function() {
     _containerEl.style.height = width;
     var translateX = -height / 2 + width / 2;
     var translateY = -width / 2 + height /2;
-    _containerEl.style.transition = '1s';
-    _imageEl.style.transition = '1s';
+    _containerEl.style.transition = '0.5s';
+    _imageEl.style.transition = '0.5s';
     _containerEl.style.webkitTransform = "translate(" + translateX + "px," + translateY + "px)" + "rotate(90deg)";
     _containerEl.style.transform = "translate(" + translateX + "px," + translateY + "px)" + "rotate(90deg)";
   };
