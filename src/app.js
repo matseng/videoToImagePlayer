@@ -75,6 +75,20 @@ Sugr.imageplayer = (function() {
     var self = this;
     _audio.element.currentTime = 1 / self.fps * (_frameIndex);
     _audio.element.play();
+    var width = parent.window.innerWidth;
+    var height = parent.window.innerHeight;
+    console.log(width, height);
+    _imageEl.width = height;
+    _imageEl.height = width;
+    _containerEl.style.position = 'fixed';
+    _containerEl.style.left = - height / 2 + 'px';
+    _containerEl.style.top = - width / 2 + 'px';
+    _containerEl.style.width = height;
+    _containerEl.style.height = width;
+    var translateX = width / 2;
+    var translateY = height / 2;
+    _containerEl.style.webkitTransform = "translate(" + translateX + "px," + translateY + "px)" + "rotate(90deg)";
+    _containerEl.style.transform = "translate(" + translateX + "px," + translateY + "px)" + "rotate(90deg)";
   };
 
   function _autoplay() {
