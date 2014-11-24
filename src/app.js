@@ -37,11 +37,12 @@ Sugr.imageplayer = (function() {
       }
 
       if (_audio.element && _audio.element.currentTime) {
-        expectedFrameIndex = this.fps * _audio.element.currentTime;
-        console.log(expectedFrameIndex, _frameIndex);
-        if (expectedFrameIndex > _frameIndex) _frameIndex = Math.round(expectedFrameIndex);
+        expectedFrameIndex = Math.round(this.fps * _audio.element.currentTime);
+        if (expectedFrameIndex > _frameIndex) {
+          console.log(expectedFrameIndex, _frameIndex);
+          _frameIndex = expectedFrameIndex;
+        }
       }
-      console.log(_frameIndex);
       if (this.frameCount && _frameIndex >= this.frameCount) {
         return;
       }
@@ -100,9 +101,11 @@ Sugr.imageplayer = (function() {
         // debugger
         var div = document.createElement('div');
         _audio.element = document.createElement('audio');
-        _audio.element.setAttribute('controls', true);
-        div.style.position = 'relative';
-        div.style.top ='400px';
+        // _audio.element.setAttribute('controls', false);
+        // div.style.position = 'relative';
+        div.style.position = 'absolute';
+        div.style.width = '1px';
+        div.style.height = '1px';
         // _audio.element.setAttribute('autoplay', true);
         _audio.element.src = _audio.srcPrefix + _audio.src;
         // _audio.element.src = _base64StringToImageUrl(_split(_audio.src), 'audio/aac');
