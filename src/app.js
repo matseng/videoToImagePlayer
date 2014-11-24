@@ -18,8 +18,8 @@ Sugr.imageplayer = (function() {
     }
 
     function render() {
-      if (this.frameCount && _frameIndex == this.frameCount) return;
-      if ( this.frameCount && _frameIndex === _imagesArray.length) {
+      if ( this.frameCount && _frameIndex >= this.frameCount ) return;
+      if ( !this.frameCount && _frameIndex === _imagesArray.length ) {
         _paused = true;
         console.log("PAUSED to buffer download");
         return;
@@ -27,6 +27,14 @@ Sugr.imageplayer = (function() {
       if( _clicked ) {
         return;
       }
+
+      // if (_audio.element && _audio.element.currentTime) {
+      //   expectedFrameIndex = Math.round(this.fps * _audio.element.currentTime);
+      //   if (expectedFrameIndex > _frameIndex) {
+      //     console.log(expectedFrameIndex, _frameIndex);
+      //     _frameIndex = expectedFrameIndex;
+      //   }
+      // }
 
       setTimeout(function() {
         _frameIndex++;
@@ -49,26 +57,38 @@ Sugr.imageplayer = (function() {
     console.log('append image element');
   };
 
+  var initialized = false;
   function _onclick() {
     console.log("ONCLICK", _videoEl);
     var self = this;
     
     var seekHandler = function() {
-      _videoEl.currentTime = 1 / self.fps * (_frameIndex - 2);
+      _videoEl.currentTime = 1 / self.fps * (_frameIndex);
       _clicked = true;
       if (_imagesArrayType === 'base64') _imageEl.src = "data:image/jpeg;base64," + _imagesArray[_imagesArray.length - 1];
       if (_imagesArrayType === 'url') _imageEl.src = _imagesArray[_imagesArray.length - 1];
       _videoEl.removeEventListener('progress', seekHandler, false);
       console.log('PROGRESS and SEEK EVENT');
     };
-
-    _videoEl.addEventListener('play', function() {
-      _videoEl.addEventListener('canplaythrough', function() {
-        _videoEl.addEventListener('progress', seekHandler, false);
+    if (!initialized) {
+      initialized = true;    
+      _videoEl.addEventListener('play', function() {
+        _videoEl.addEventListener('canplaythrough', function() {
+          _videoEl.addEventListener('progress', seekHandler, false);
+          _videoEl.addEventListener('webkitendfullscreen', onPlayerExitFullscreen.bind(self), false);
+        });
       });
-    });
+    }
 
     _videoEl.play();
+  };
+
+  function onPlayerExitFullscreen() {
+    var currentTime = _videoEl.currentTime;
+    _frameIndex = Math.round(this.fps * currentTime);
+    console.log(_frameIndex);
+    _clicked = false;
+    _play.call(this);
   };
 
   function _autoplay() {
@@ -145,7 +165,7 @@ Sugr.imageplayer = (function() {
         chunk = this.xhr.responseText.substring(start, end);
         partialArrBase64 = _split(remainder + chunk);
         for(var i = 0; i < partialArrBase64.length - 1; i++) {
-          if (window.URL && window.URL.createObjectURL && window.atob && Blob) {
+          if (false && window.URL && window.URL.createObjectURL && window.atob && Blob) {
             _imagesArrayType = 'url';
             _imagesArray.push(_base64StringToImageUrl(partialArrBase64[i]));
           } else {
