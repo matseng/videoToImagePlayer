@@ -41,6 +41,7 @@ Sugr.imageplayer = (function() {
         window.requestAnimationFrame(render.bind(this));
       }.bind(this), 1000 / this.fps);
       // _frameIndex = (_frameIndex >= _imagesArray.length) ? _imagesArray.length - 1 : _frameIndex;
+      if(_frameIndex >= _imagesArray.length) _frameIndex = _imagesArray.length - 1;
       if (_imagesArrayType === 'base64') _imageEl.src = "data:image/jpeg;base64," + _imagesArray[_frameIndex];
       if (_imagesArrayType === 'url') _imageEl.src = _imagesArray[_frameIndex];
       // _imagesArray[_frameIndex] = null;
