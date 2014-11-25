@@ -56,9 +56,10 @@ Sugr.imageplayer = (function() {
     var initialSeekHandler = function() {
       _videoEl.currentTime = 1 / self.fps * _frameIndex;
       console.log('seekhandler: ', _videoEl.currentTime);
-      if (_imagesArrayType === 'base64') _imageEl.src = "data:image/jpeg;base64," + _imagesArray[_imagesArray.length - 1];
-      if (_imagesArrayType === 'url') _imageEl.src = _imagesArray[_imagesArray.length - 1];
+      // if (_imagesArrayType === 'base64') _imageEl.src = "data:image/jpeg;base64," + _imagesArray[_imagesArray.length - 1];
+      // if (_imagesArrayType === 'url') _imageEl.src = _imagesArray[_imagesArray.length - 1];
       _videoEl.removeEventListener('progress', initialSeekHandler, false);
+      _videoEl.play();
       console.log('PROGRESS and SEEK EVENT');
     };
     _videoEl.addEventListener('play', function() {
@@ -74,6 +75,7 @@ Sugr.imageplayer = (function() {
     });
     if (_videoEl.currentTime) _videoEl.currentTime = 1 / self.fps * _frameIndex;
     _videoEl.play();
+    if( !initialized ) _videoEl.pause();
     _clicked = true;
   };
 
