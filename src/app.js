@@ -48,75 +48,46 @@ Sugr.imageplayer = (function() {
     console.log('append image element');
   };
 
-  var initialized = false;
+  var initialized;
   function _onclick() {
     console.log("1. ONCLICK", _videoEl.currentTime);
     var self = this;
-    // var currentTime = _videoEl.currentTime = 1 / self.fps * _frameIndex;
+    initialized = false;
+
+
+    _videoEl.addEventListener('play', playHandler, false);
+
+    function playHandler() {
+      if( !initialized ) {
+        console.log('2. play: ', _videoEl.currentTime);
+        _videoEl.pause();
+        _videoEl.addEventListener('canplay', canplayHandler, false);
+      }
+    };
     
-    var webkitbeginfullscreen = function() {
-        console.log('3. webkitbeginfullscreen: ', _videoEl.currentTime);
-        // if (_videoEl.currentTime) _videoEl.currentTime = 1 / self.fps * _frameIndex;
-        _videoEl.removeEventListener('webkitbeginfullscreen', webkitbeginfullscreen, false);
+    function canplayHandler(event) {
+      console.log('4. canplayHandler', _videoEl.currentTime);
+      _videoEl.currentTime = 1 / self.fps * _frameIndex;
+      _videoEl.addEventListener('timeupdate', timeupdateHandler, false);
+      _videoEl.addEventListener('webkitendfullscreen', webkitendfullscreenHandler.bind(self, event.timeStamp), false);
     };
 
-    var initialSeekHandler = function() {
-      // _videoEl.currentTime = 1 / self.fps * _frameIndex;
+    function timeupdateHandler() {
       if( !initialized ) {
         initialized = true;    
-        console.log('5. timeupdate / initialSeekHandler ', _videoEl.currentTime);
+        console.log('5. timeupdateHandler ', _videoEl.currentTime);
         _videoEl.play();
-
-        console.log('5.1 timeupdate / initialSeekHandler ', _videoEl.currentTime);
-        _videoEl.addEventListener('canplaythrough', function() {
-              console.log('4.1 canplaythrough', _videoEl.currentTime);
-              // _videoEl.play();
-        }, false);
       }
-      // if ( !_videoEl.currentTime ) _videoEl.currentTime = 1 / self.fps * _frameIndex;
-      // console.log('initialSeekHandler: ', _videoEl.currentTime);
-
       // if (_imagesArrayType === 'base64') _imageEl.src = "data:image/jpeg;base64," + _imagesArray[_imagesArray.length - 1];
       // if (_imagesArrayType === 'url') _imageEl.src = _imagesArray[_imagesArray.length - 1];
-      // _videoEl.removeEventListener('progress', initialSeekHandler, false);
-      // _videoEl.play();
     };
-    if( !initialized ) {
-      _videoEl.addEventListener('webkitbeginfullscreen', webkitbeginfullscreen, false);
-    }
-    _videoEl.addEventListener('play', function() {
-      console.log('2. play: ', _videoEl.currentTime);
-      if( !initialized ) {
-        _videoEl.pause();
-      // }
-      // _videoEl.addEventListener('canplaythrough', function() {
-      _videoEl.addEventListener('canplay', function() {
-        // if( !initialized ) {
-          // initialized = true;    
-          console.log('4. canplay singleton: ', _videoEl.currentTime);
-          _videoEl.addEventListener('timeupdate', initialSeekHandler, false);
-          var currentTime = 1 / self.fps * _frameIndex;
-          _videoEl.currentTime = currentTime;
-          console.log('updated time? ', currentTime, _videoEl.currentTime);
-          // _videoEl.addEventListener('webkitendfullscreen', onPlayerExitFullscreen.bind(self, _videoEl.currentTime), false);
-          // _videoEl.addEventListener('waiting', waiting.bind(self), false);
-          // _videoEl.addEventListener('canplaythrough', function() {
-          //   console.log('4.1 canplaythrough', _videoEl.currentTime);
-          //   // _videoEl.play();
-          // }, false);
-        });
-      }
-    });
-    console.log(_videoEl.currentTime);
-    // if (_videoEl.currentTime) _videoEl.currentTime = 1 / self.fps * _frameIndex;
     _videoEl.play();
-    // if( !initialized ) _videoEl.pause();
     _clicked = true;
   };
 
-  function onPlayerExitFullscreen(currentTime, event) {
-    _frameIndex = Math.round(this.fps * currentTime);
-    console.log(_frameIndex, event);
+  function webkitendfullscreenHandler(timeStampInitial, event) {
+    _frameIndex = Math.round(this.fps * (event.timeStamp - timeStampInitial) / 1000);
+    console.log(_frameIndex);
     _clicked = false;
     _play.call(this);
   };
