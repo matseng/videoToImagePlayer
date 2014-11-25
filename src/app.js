@@ -62,17 +62,27 @@ Sugr.imageplayer = (function() {
 
     var initialSeekHandler = function() {
       // _videoEl.currentTime = 1 / self.fps * _frameIndex;
-      console.log('5. progress / initialSeekHandler');
-      if ( !_videoEl.currentTime ) _videoEl.currentTime = 1 / self.fps * _frameIndex;
+      if( !initialized ) {
+        initialized = true;    
+        console.log('5. timeupdate / initialSeekHandler ', _videoEl.currentTime);
+        _videoEl.play();
+
+        console.log('5.1 timeupdate / initialSeekHandler ', _videoEl.currentTime);
+        _videoEl.addEventListener('canplaythrough', function() {
+              console.log('4.1 canplaythrough', _videoEl.currentTime);
+              // _videoEl.play();
+        }, false);
+      }
+      // if ( !_videoEl.currentTime ) _videoEl.currentTime = 1 / self.fps * _frameIndex;
       // console.log('initialSeekHandler: ', _videoEl.currentTime);
 
       // if (_imagesArrayType === 'base64') _imageEl.src = "data:image/jpeg;base64," + _imagesArray[_imagesArray.length - 1];
       // if (_imagesArrayType === 'url') _imageEl.src = _imagesArray[_imagesArray.length - 1];
-      _videoEl.removeEventListener('progress', initialSeekHandler, false);
-      _videoEl.play();
+      // _videoEl.removeEventListener('progress', initialSeekHandler, false);
+      // _videoEl.play();
     };
     if( !initialized ) {
-      // _videoEl.addEventListener('webkitbeginfullscreen', webkitbeginfullscreen, false);
+      _videoEl.addEventListener('webkitbeginfullscreen', webkitbeginfullscreen, false);
     }
     _videoEl.addEventListener('play', function() {
       console.log('2. play: ', _videoEl.currentTime);
@@ -82,22 +92,23 @@ Sugr.imageplayer = (function() {
       // _videoEl.addEventListener('canplaythrough', function() {
       _videoEl.addEventListener('canplay', function() {
         // if( !initialized ) {
-          initialized = true;    
+          // initialized = true;    
           console.log('4. canplay singleton: ', _videoEl.currentTime);
-          _videoEl.currentTime = 1 / self.fps * _frameIndex;
-          console.log('updated time? ', _videoEl.currentTime);
-          // _videoEl.addEventListener('progress', initialSeekHandler, false);
-          _videoEl.addEventListener('webkitendfullscreen', onPlayerExitFullscreen.bind(self, _videoEl.currentTime), false);
+          _videoEl.addEventListener('timeupdate', initialSeekHandler, false);
+          var currentTime = 1 / self.fps * _frameIndex;
+          _videoEl.currentTime = currentTime;
+          console.log('updated time? ', currentTime, _videoEl.currentTime);
+          // _videoEl.addEventListener('webkitendfullscreen', onPlayerExitFullscreen.bind(self, _videoEl.currentTime), false);
           // _videoEl.addEventListener('waiting', waiting.bind(self), false);
-          _videoEl.addEventListener('canplaythrough', function() {
-            console.log('4.1 canplaythrough', _videoEl.currentTime);
-            _videoEl.play();
-          }, false);
+          // _videoEl.addEventListener('canplaythrough', function() {
+          //   console.log('4.1 canplaythrough', _videoEl.currentTime);
+          //   // _videoEl.play();
+          // }, false);
         });
       }
     });
     console.log(_videoEl.currentTime);
-    if (_videoEl.currentTime) _videoEl.currentTime = 1 / self.fps * _frameIndex;
+    // if (_videoEl.currentTime) _videoEl.currentTime = 1 / self.fps * _frameIndex;
     _videoEl.play();
     // if( !initialized ) _videoEl.pause();
     _clicked = true;
