@@ -50,43 +50,51 @@ Sugr.imageplayer = (function() {
 
   var initialized = false;
   function _onclick() {
-    console.log("ONCLICK", _videoEl);
+    console.log("1. ONCLICK", _videoEl.currentTime);
     var self = this;
     // var currentTime = _videoEl.currentTime = 1 / self.fps * _frameIndex;
     
     var webkitbeginfullscreen = function() {
-        console.log('webkitbeginfullscreen: ', _videoEl.currentTime);
-        if (_videoEl.currentTime) _videoEl.currentTime = 1 / self.fps * _frameIndex;
+        console.log('3. webkitbeginfullscreen: ', _videoEl.currentTime);
+        // if (_videoEl.currentTime) _videoEl.currentTime = 1 / self.fps * _frameIndex;
         _videoEl.removeEventListener('webkitbeginfullscreen', webkitbeginfullscreen, false);
     };
 
     var initialSeekHandler = function() {
       // _videoEl.currentTime = 1 / self.fps * _frameIndex;
+      console.log('5. progress / initialSeekHandler');
       if ( !_videoEl.currentTime ) _videoEl.currentTime = 1 / self.fps * _frameIndex;
-      console.log('initialSeekHandler: ', _videoEl.currentTime);
+      // console.log('initialSeekHandler: ', _videoEl.currentTime);
 
       // if (_imagesArrayType === 'base64') _imageEl.src = "data:image/jpeg;base64," + _imagesArray[_imagesArray.length - 1];
       // if (_imagesArrayType === 'url') _imageEl.src = _imagesArray[_imagesArray.length - 1];
       _videoEl.removeEventListener('progress', initialSeekHandler, false);
       _videoEl.play();
-      console.log('PROGRESS and SEEK EVENT');
     };
     if( !initialized ) {
-      _videoEl.addEventListener('webkitbeginfullscreen', webkitbeginfullscreen);
+      // _videoEl.addEventListener('webkitbeginfullscreen', webkitbeginfullscreen, false);
     }
     _videoEl.addEventListener('play', function() {
+      console.log('2. play: ', _videoEl.currentTime);
       if( !initialized ) {
         _videoEl.pause();
-      }
-      _videoEl.addEventListener('canplaythrough', function() {
-        if( !initialized ) {
+      // }
+      // _videoEl.addEventListener('canplaythrough', function() {
+      _videoEl.addEventListener('canplay', function() {
+        // if( !initialized ) {
           initialized = true;    
-          console.log('HERE');
-          _videoEl.addEventListener('progress', initialSeekHandler, false);
-          _videoEl.addEventListener('webkitendfullscreen', onPlayerExitFullscreen.bind(self), false);
-          _videoEl.addEventListener('waiting', waiting.bind(self), false);
-        }
-      });
+          console.log('4. canplay singleton: ', _videoEl.currentTime);
+          _videoEl.currentTime = 1 / self.fps * _frameIndex;
+          console.log('updated time? ', _videoEl.currentTime);
+          // _videoEl.addEventListener('progress', initialSeekHandler, false);
+          _videoEl.addEventListener('webkitendfullscreen', onPlayerExitFullscreen.bind(self, _videoEl.currentTime), false);
+          // _videoEl.addEventListener('waiting', waiting.bind(self), false);
+          _videoEl.addEventListener('canplaythrough', function() {
+            console.log('4.1 canplaythrough', _videoEl.currentTime);
+            _videoEl.play();
+          }, false);
+        });
+      }
     });
     console.log(_videoEl.currentTime);
     if (_videoEl.currentTime) _videoEl.currentTime = 1 / self.fps * _frameIndex;
@@ -95,9 +103,9 @@ Sugr.imageplayer = (function() {
     _clicked = true;
   };
 
-  function onPlayerExitFullscreen() {
-    _frameIndex = Math.round(this.fps * _videoEl.currentTime);
-    console.log(_frameIndex);
+  function onPlayerExitFullscreen(currentTime, event) {
+    _frameIndex = Math.round(this.fps * currentTime);
+    console.log(_frameIndex, event);
     _clicked = false;
     _play.call(this);
   };
