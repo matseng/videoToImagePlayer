@@ -60,26 +60,22 @@ Sugr.imageplayer = (function() {
       // if (_imagesArrayType === 'url') _imageEl.src = _imagesArray[_imagesArray.length - 1];
       _videoEl.removeEventListener('progress', initialSeekHandler, false);
       _videoEl.play();
-      _clicked = true;
       console.log('PROGRESS and SEEK EVENT');
     };
-    // _videoEl.addEventListener('play', function() {
-      // _videoEl.addEventListener('canplaythrough', function() {
+    _videoEl.addEventListener('play', function() {
+      _videoEl.addEventListener('canplaythrough', function() {
         if( !initialized ) {
-          _videoEl.addEventListener('webkitbeginfullscreen', function() {
-            // _videoEl.pause();
-            _videoEl.currentTime = 1 / self.fps * _frameIndex;
-
-          });
           initialized = true;    
-          // _videoEl.addEventListener('progress', initialSeekHandler, false);
+          console.log('HERE');
+          _videoEl.addEventListener('progress', initialSeekHandler, false);
           _videoEl.addEventListener('webkitendfullscreen', onPlayerExitFullscreen.bind(self), false);
-          // _videoEl.addEventListener('waiting', waiting.bind(self), false);
+          _videoEl.addEventListener('waiting', waiting.bind(self), false);
         }
-      // });
-    // });
+      });
+    });
     if (_videoEl.currentTime) _videoEl.currentTime = 1 / self.fps * _frameIndex;
     _videoEl.play();
+    // if( !initialized ) _videoEl.pause();
     _clicked = true;
   };
 
