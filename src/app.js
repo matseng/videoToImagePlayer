@@ -51,16 +51,19 @@ Sugr.imageplayer = (function() {
   };
 
   var initialized;
-  var timeStampInitial;
-  function _onclick(event) {
-    timeStampInitial = timeStampInitial || event.timeStamp;
+  var timeStampOnInitialPlay;
+  var frameIndexOnInitialPlay;
+  function _onclick() {
     console.log("1. ONCLICK", _videoEl.currentTime);
     var self = this;
     initialized = false;
 
     _videoEl.addEventListener('play', playHandler, false);
 
-    function playHandler() {
+    function playHandler(event) {
+      timeStampOnInitialPlay = timeStampOnInitialPlay || event.timeStamp;
+      frameIndexOnInitialPlay = frameIndexOnInitialPlay || _frameIndex;
+      console.log(timeStampOnInitialPlay);
       _videoEl.pause();
       if( !_videoEl.currentTime ) {
         console.log('2. play: ', _videoEl.currentTime);
@@ -92,7 +95,8 @@ Sugr.imageplayer = (function() {
     };
 
     function webkitendfullscreenHandler(event) {
-      _frameIndex = Math.round(self.fps * (event.timeStamp - timeStampInitial) / 1000);
+      console.log(event.timeStamp, timeStampOnInitialPlay);
+      _frameIndex = frameIndexOnInitialPlay + Math.round(self.fps * (event.timeStamp - timeStampOnInitialPlay) / 1000);
       console.log(_frameIndex);
       _clicked = false;
       _play.call(self);
