@@ -1,7 +1,7 @@
 var Sugr = Sugr || {};
 Sugr.imageplayer = (function() {
 
-  var _imagesArray, _imagesArrayType, _frameIndex = 0, _containerEl, _videoEl, _imageEl, _clicked, _paused, _timerStart;
+  var _imagesArray, _imagesArrayType, _frameIndex = 0, _containerEl, _videoEl, _imageEl, _toggle, _paused, _timerStart;
 
   function _split(rawTextData) {
     return rawTextData.split('\n')
@@ -26,7 +26,7 @@ Sugr.imageplayer = (function() {
         console.log("PAUSED to buffer download");
         return;
       }
-      if( _clicked ) {
+      if( _toggle ) {
         return;
       }
 
@@ -67,12 +67,14 @@ Sugr.imageplayer = (function() {
   function _onclick() {
     console.log("1. ONCLICK", _videoEl.currentTime);
     clicked = clicked || true;
+    _toggle = true;
     var self = this;
     initialized = false;
     displayLoading();
     
     if (_frameIndex === self.frameCount) {
       _frameIndex = 0;
+      frameIndexOnInitialPlay = null;
       timeStampOnInitialPlay = null;
     }
 
@@ -116,14 +118,13 @@ Sugr.imageplayer = (function() {
       console.log(event.timeStamp, timeStampOnInitialPlay);
       _frameIndex = frameIndexOnInitialPlay + Math.round(self.fps * (event.timeStamp - timeStampOnInitialPlay) / 1000);
       console.log(_frameIndex);
-      _clicked = false;
+      _toggle = false;
       _play.call(self);
       _videoEl.removeEventListener('webkitendfullscreen', webkitendfullscreenHandler, false);
 
     };
 
     _videoEl.play();
-    _clicked = true;
   };
 
 
