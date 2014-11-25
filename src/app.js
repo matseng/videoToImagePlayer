@@ -52,26 +52,27 @@ Sugr.imageplayer = (function() {
   function _onclick() {
     console.log("ONCLICK", _videoEl);
     var self = this;
+    // var currentTime = _videoEl.currentTime = 1 / self.fps * _frameIndex;
     
+    var webkitbeginfullscreen = function() {
+        console.log('webkitbeginfullscreen: ', _videoEl.currentTime);
+        if (_videoEl.currentTime) _videoEl.currentTime = 1 / self.fps * _frameIndex;
+        _videoEl.removeEventListener('webkitbeginfullscreen', webkitbeginfullscreen);
+    };
+
     var initialSeekHandler = function() {
       // _videoEl.currentTime = 1 / self.fps * _frameIndex;
-      // if ( !_videoEl.currentTime ) _videoEl.currentTime = 1 / self.fps * _frameIndex;
+      if ( !_videoEl.currentTime ) _videoEl.currentTime = 1 / self.fps * _frameIndex;
       console.log('initialSeekHandler: ', _videoEl.currentTime);
 
       // if (_imagesArrayType === 'base64') _imageEl.src = "data:image/jpeg;base64," + _imagesArray[_imagesArray.length - 1];
       // if (_imagesArrayType === 'url') _imageEl.src = _imagesArray[_imagesArray.length - 1];
       _videoEl.removeEventListener('progress', initialSeekHandler, false);
-      _videoEl.play();
+      // _videoEl.play();
       console.log('PROGRESS and SEEK EVENT');
     };
     if( !initialized ) {
-      _videoEl.addEventListener('webkitbeginfullscreen', function() {
-        console.log('webkitbeginfullscreen: ', _videoEl.currentTime);
-        if (_videoEl.currentTime) _videoEl.currentTime = 1 / self.fps * _frameIndex;
-
-        // _videoEl.pause();
-        // _videoEl.play();
-      });
+      _videoEl.addEventListener('webkitbeginfullscreen', webkitbeginfullscreen);
     }
     _videoEl.addEventListener('play', function() {
       _videoEl.addEventListener('canplaythrough', function() {
@@ -84,9 +85,10 @@ Sugr.imageplayer = (function() {
         }
       });
     });
-    if (_videoEl.currentTime) _videoEl.currentTime = 1 / self.fps * _frameIndex;
+    console.log(_videoEl.currentTime);
+    if (_videoEl.currentTime) _videoEl.currentTime = currentTime;
     _videoEl.play();
-    if( !initialized ) _videoEl.pause();
+    // if( !initialized ) _videoEl.pause();
     _clicked = true;
   };
 
