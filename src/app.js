@@ -28,23 +28,13 @@ Sugr.imageplayer = (function() {
         return;
       }
 
-      // if (_audio.element && _audio.element.currentTime) {
-      //   expectedFrameIndex = Math.round(this.fps * _audio.element.currentTime);
-      //   if (expectedFrameIndex > _frameIndex) {
-      //     console.log(expectedFrameIndex, _frameIndex);
-      //     _frameIndex = expectedFrameIndex;
-      //   }
-      // }
-
       setTimeout(function() {
         _frameIndex++;
         window.requestAnimationFrame(render.bind(this));
       }.bind(this), 1000 / this.fps);
-      // _frameIndex = (_frameIndex >= _imagesArray.length) ? _imagesArray.length - 1 : _frameIndex;
       if(_frameIndex >= _imagesArray.length) _frameIndex = _imagesArray.length - 1;
       if (_imagesArrayType === 'base64') _imageEl.src = "data:image/jpeg;base64," + _imagesArray[_frameIndex];
       if (_imagesArrayType === 'url') _imageEl.src = _imagesArray[_frameIndex];
-      // _imagesArray[_frameIndex] = null;
     };    
     render.call(this);
   };
@@ -54,7 +44,6 @@ Sugr.imageplayer = (function() {
     _imageEl.id = "imageFromVideo";
     _imageEl.width = this.width;
     _containerEl.appendChild(_imageEl);
-    // _imageEl.addEventListener('touchstart', _onclick.bind(this));
     _imageEl.addEventListener('click', _onclick.bind(this));
     console.log('append image element');
   };
@@ -64,35 +53,39 @@ Sugr.imageplayer = (function() {
     console.log("ONCLICK", _videoEl);
     var self = this;
     
-    var seekHandler = function() {
+    var initialSeekHandler = function() {
       _videoEl.currentTime = 1 / self.fps * _frameIndex;
       console.log('seekhandler: ', _videoEl.currentTime);
       if (_imagesArrayType === 'base64') _imageEl.src = "data:image/jpeg;base64," + _imagesArray[_imagesArray.length - 1];
       if (_imagesArrayType === 'url') _imageEl.src = _imagesArray[_imagesArray.length - 1];
-      // _videoEl.removeEventListener('progress', seekHandler, false);
+      _videoEl.removeEventListener('progress', seekHandler, false);
       console.log('PROGRESS and SEEK EVENT');
     };
-      _videoEl.addEventListener('play', function() {
-        _videoEl.addEventListener('canplaythrough', function() {
-          if( !initialized ) {
-            initialized = true;    
-            console.log('HERE');
-            _videoEl.addEventListener('progress', seekHandler, false);
-            _videoEl.addEventListener('webkitendfullscreen', onPlayerExitFullscreen.bind(self), false);
-          }
-        });
+    _videoEl.addEventListener('play', function() {
+      _videoEl.addEventListener('canplaythrough', function() {
+        if( !initialized ) {
+          initialized = true;    
+          console.log('HERE');
+          _videoEl.addEventListener('progress', initialSeekHandler, false);
+          _videoEl.addEventListener('webkitendfullscreen', onPlayerExitFullscreen.bind(self), false);
+          _videoEl.addEventListener('waiting', waiting.bind(self), false);
+        }
       });
+    });
     if (_videoEl.currentTime) _videoEl.currentTime = 1 / self.fps * _frameIndex;
     _videoEl.play();
     _clicked = true;
   };
 
   function onPlayerExitFullscreen() {
-    // var currentTime = _videoEl.currentTime;
     _frameIndex = Math.round(this.fps * _videoEl.currentTime);
     console.log(_frameIndex);
     _clicked = false;
     _play.call(this);
+  };
+
+  function waiting() {
+    console.log('waiting');
   };
 
   function _autoplay() {
