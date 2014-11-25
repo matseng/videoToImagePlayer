@@ -57,7 +57,7 @@ Sugr.imageplayer = (function() {
     var webkitbeginfullscreen = function() {
         console.log('webkitbeginfullscreen: ', _videoEl.currentTime);
         if (_videoEl.currentTime) _videoEl.currentTime = 1 / self.fps * _frameIndex;
-        _videoEl.removeEventListener('webkitbeginfullscreen', webkitbeginfullscreen);
+        _videoEl.removeEventListener('webkitbeginfullscreen', webkitbeginfullscreen, false);
     };
 
     var initialSeekHandler = function() {
@@ -89,7 +89,7 @@ Sugr.imageplayer = (function() {
       });
     });
     console.log(_videoEl.currentTime);
-    if (_videoEl.currentTime) _videoEl.currentTime = currentTime;
+    if (_videoEl.currentTime) _videoEl.currentTime = 1 / self.fps * _frameIndex;
     _videoEl.play();
     // if( !initialized ) _videoEl.pause();
     _clicked = true;
