@@ -73,17 +73,17 @@ Sugr.imageplayer = (function() {
     displayLoading();
     
     if (_frameIndex === self.frameCount) {
-      _frameIndex = 0;
-      frameIndexOnInitialPlay = 0;
+      _frameIndex = 1;
+      frameIndexOnInitialPlay = 1;
       timeStampOnInitialPlay = null;
     }
 
     _videoEl.addEventListener('play', playHandler, false);
 
     function playHandler(event) {
-      timeStampOnInitialPlay = timeStampOnInitialPlay || event.timeStamp;
       frameIndexOnInitialPlay = frameIndexOnInitialPlay || _frameIndex;
-      console.log(timeStampOnInitialPlay);
+      timeStampOnInitialPlay = timeStampOnInitialPlay || event.timeStamp;
+      console.log(frameIndexOnInitialPlay, timeStampOnInitialPlay);
       _videoEl.pause();
       if( !clicked ) {
         console.log('2. play: ', _videoEl.currentTime);
