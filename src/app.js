@@ -50,13 +50,20 @@ Sugr.imageplayer = (function() {
     console.log('append image element');
   };
 
+  var clicked;
   var initialized;
   var timeStampOnInitialPlay;
   var frameIndexOnInitialPlay;
   function _onclick() {
+    clicked = clicked || true;
     console.log("1. ONCLICK", _videoEl.currentTime);
     var self = this;
     initialized = false;
+    
+    if (_frameIndex === self.frameCount) {
+      _frameIndex = 0;
+      timeStampOnInitialPlay = null;
+    }
 
     _videoEl.addEventListener('play', playHandler, false);
 
@@ -65,7 +72,8 @@ Sugr.imageplayer = (function() {
       frameIndexOnInitialPlay = frameIndexOnInitialPlay || _frameIndex;
       console.log(timeStampOnInitialPlay);
       _videoEl.pause();
-      if( !_videoEl.currentTime ) {
+      // if( !_videoEl.currentTime ) {
+      if( !clicked ) {
         console.log('2. play: ', _videoEl.currentTime);
         _videoEl.addEventListener('canplay', canplayHandler, false);
       } else {
