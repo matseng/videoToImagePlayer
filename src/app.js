@@ -50,15 +50,26 @@ Sugr.imageplayer = (function() {
     console.log('append image element');
   };
 
+
+  function displayLoading() {
+    var loadingEl = document.createElement('div');
+    loadingEl.textContent = 'Loading...'
+    _containerEl.appendChild(loadingEl);
+    setTimeout(function() {
+      _containerEl.removeChild(loadingEl)
+    }, 1000);
+  };
+
   var clicked;
   var initialized;
   var timeStampOnInitialPlay;
   var frameIndexOnInitialPlay;
   function _onclick() {
-    clicked = clicked || true;
     console.log("1. ONCLICK", _videoEl.currentTime);
+    clicked = clicked || true;
     var self = this;
     initialized = false;
+    displayLoading();
     
     if (_frameIndex === self.frameCount) {
       _frameIndex = 0;
@@ -72,7 +83,6 @@ Sugr.imageplayer = (function() {
       frameIndexOnInitialPlay = frameIndexOnInitialPlay || _frameIndex;
       console.log(timeStampOnInitialPlay);
       _videoEl.pause();
-      // if( !_videoEl.currentTime ) {
       if( !clicked ) {
         console.log('2. play: ', _videoEl.currentTime);
         _videoEl.addEventListener('canplay', canplayHandler, false);
