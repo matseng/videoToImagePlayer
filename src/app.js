@@ -58,7 +58,7 @@ Sugr.imageplayer = (function() {
       console.log('seekhandler: ', _videoEl.currentTime);
       if (_imagesArrayType === 'base64') _imageEl.src = "data:image/jpeg;base64," + _imagesArray[_imagesArray.length - 1];
       if (_imagesArrayType === 'url') _imageEl.src = _imagesArray[_imagesArray.length - 1];
-      _videoEl.removeEventListener('progress', seekHandler, false);
+      _videoEl.removeEventListener('progress', initialSeekHandler, false);
       console.log('PROGRESS and SEEK EVENT');
     };
     _videoEl.addEventListener('play', function() {
