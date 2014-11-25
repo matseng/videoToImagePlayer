@@ -74,7 +74,7 @@ Sugr.imageplayer = (function() {
     
     if (_frameIndex === self.frameCount) {
       _frameIndex = 0;
-      frameIndexOnInitialPlay = null;
+      frameIndexOnInitialPlay = 0;
       timeStampOnInitialPlay = null;
     }
 
