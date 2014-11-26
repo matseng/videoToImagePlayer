@@ -111,7 +111,6 @@ Sugr.imageplayer = (function() {
     function progressHandler() {
       if( !initialized ) {
         console.log('5. progressHandler ', _videoEl.currentTime);
-        loading.remove();
         initialized = true;
         _videoEl.currentTime = 1 / self.fps * _frameIndex;
         _videoEl.play();
@@ -124,6 +123,7 @@ Sugr.imageplayer = (function() {
 
     function webkitendfullscreenHandler(event) {
       console.log(event.timeStamp, timeStampOnInitialPlay);
+      loading.remove();
       _frameIndex = frameIndexOnInitialPlay + Math.round(self.fps * (event.timeStamp - timeStampOnInitialPlay) / 1000);
       console.log(_frameIndex);
       _toggle = false;
