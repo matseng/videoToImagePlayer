@@ -51,14 +51,20 @@ Sugr.imageplayer = (function() {
   };
 
 
-  function displayLoading() {
-    var loadingEl = document.createElement('div');
-    loadingEl.textContent = 'Loading...'
-    _containerEl.appendChild(loadingEl);
-    setTimeout(function() {
-      _containerEl.removeChild(loadingEl)
-    }, 1000);
+  var loading = {
+    loadingEl: document.createElement('div'),
+    
+    display: function() {
+      this.loadingEl.textContent = 'Loading...'
+      _containerEl.appendChild(this.loadingEl);
+    },
+
+    remove: function() {
+      _containerEl.removeChild(this.loadingEl)
+    }
   };
+
+
 
   var clicked;
   var initialized;
@@ -69,7 +75,7 @@ Sugr.imageplayer = (function() {
     _toggle = true;
     var self = this;
     initialized = false;
-    displayLoading();
+    loading.display();
     
     if (_frameIndex === self.frameCount) {
       _frameIndex = 1;
@@ -105,6 +111,7 @@ Sugr.imageplayer = (function() {
     function progressHandler() {
       if( !initialized ) {
         console.log('5. progressHandler ', _videoEl.currentTime);
+        loading.remove();
         initialized = true;
         _videoEl.currentTime = 1 / self.fps * _frameIndex;
         _videoEl.play();
