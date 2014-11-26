@@ -62,11 +62,10 @@ Sugr.imageplayer = (function() {
 
   var clicked;
   var initialized;
-  var timeStampOnInitialPlay;
   var frameIndexOnInitialPlay;
+  var timeStampOnInitialPlay;
   function _onclick() {
     console.log("1. ONCLICK", _videoEl.currentTime);
-    clicked = clicked || true;
     _toggle = true;
     var self = this;
     initialized = false;
@@ -86,28 +85,30 @@ Sugr.imageplayer = (function() {
       console.log(frameIndexOnInitialPlay, timeStampOnInitialPlay);
       _videoEl.pause();
       if( !clicked ) {
+        clicked = clicked || true;
         console.log('2. play: ', _videoEl.currentTime);
-        _videoEl.addEventListener('canplay', canplayHandler, false);
+        _videoEl.addEventListener('canplaythrough', canplaythroughHandler, false);
       } else {
-        canplayHandler();
+        canplaythroughHandler();
+        progressHandler();
       }
       _videoEl.removeEventListener('play', playHandler, false);
     };
     
-    function canplayHandler() {
-      console.log('4. canplayHandler', _videoEl.currentTime);
-      _videoEl.currentTime = 1 / self.fps * _frameIndex;
-      _videoEl.addEventListener('timeupdate', timeupdateHandler, false);
+    function canplaythroughHandler() {
+      console.log('4. canplaythroughHandler', _videoEl.currentTime);
+      _videoEl.addEventListener('progress', progressHandler, false);
       _videoEl.addEventListener('webkitendfullscreen', webkitendfullscreenHandler, false);
-      _videoEl.removeEventListener('canplay', canplayHandler, false);
+      _videoEl.removeEventListener('canplaythrough', canplaythroughHandler, false);
     };
 
-    function timeupdateHandler() {
+    function progressHandler() {
       if( !initialized ) {
-        initialized = true;    
-        console.log('5. timeupdateHandler ', _videoEl.currentTime);
+        console.log('5. progressHandler ', _videoEl.currentTime);
+        initialized = true;
+        _videoEl.currentTime = 1 / self.fps * _frameIndex;
         _videoEl.play();
-        _videoEl.removeEventListener('timeupdate', timeupdateHandler, false);
+        _videoEl.removeEventListener('progress', progressHandler, false);
 
       }
       // if (_imagesArrayType === 'base64') _imageEl.src = "data:image/jpeg;base64," + _imagesArray[_imagesArray.length - 1];
