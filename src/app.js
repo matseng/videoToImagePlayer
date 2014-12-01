@@ -139,6 +139,17 @@ Sugr.imageplayer = (function() {
       console.log('5.1 Buffered: ', _videoEl.buffered.start(_videoEl.buffered.length - 1), _videoEl.buffered.end(_videoEl.buffered.length - 1));
       _videoEl.addEventListener('canplaythrough', canplaythroughSeeked, false);
       _videoEl.play();
+      _videoEl.play();
+      _videoEl.play();
+      _videoEl.play();
+      _videoEl.play();
+      _videoEl.play();
+      _videoEl.play();
+      _videoEl.play();
+      _videoEl.play();
+      _videoEl.play();
+      _videoEl.play();
+      _videoEl.play();
       _videoEl.removeEventListener('seeked', seekedHander, false);
     };
 
