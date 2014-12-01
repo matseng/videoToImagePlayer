@@ -105,9 +105,10 @@ Sugr.imageplayer = (function() {
       // _videoEl.pause();
       if( !clicked ) {
         clicked = clicked || true;
-        console.log('2. play: ', _videoEl.currentTime);
-        _videoEl.addEventListener('canplaythrough', canplaythroughHandler, false);
-        // _videoEl.addEventListener('canplay', canplaythroughHandler, false);
+        console.log('2. playHandler: ', _videoEl.currentTime);
+        // _videoEl.addEventListener('canplaythrough', canplaythroughHandler, false);
+        _videoEl.addEventListener('canplay', canplaythroughHandler, false);
+        _videoEl.addEventListener('webkitbeginfullscreen', webkitbeginfullscreenHandler, false);
       } else {
         canplaythroughHandler();
         progressHandler();
@@ -116,18 +117,24 @@ Sugr.imageplayer = (function() {
     };
     
     function canplaythroughHandler() {
-      console.log('3. canplayHandler', _videoEl.currentTime);
+      console.log('3. canplay/throughHandler: ', _videoEl.currentTime);
       _videoEl.addEventListener('progress', progressHandler, false);
       _videoEl.addEventListener('webkitendfullscreen', webkitendfullscreenHandler, false);
-      _videoEl.removeEventListener('canplaythrough', canplaythroughHandler, false);
-      // _videoEl.removeEventListener('canplay', canplaythroughHandler, false);
+      // _videoEl.removeEventListener('canplaythrough', canplaythroughHandler, false);
+      _videoEl.removeEventListener('canplay', canplaythroughHandler, false);
+    };
+
+    function webkitbeginfullscreenHandler() {
+      console.log('2.1 webkitbeginfullscreen: ', _videoEl.currentTime);
+      _videoEl.pause();
+      _videoEl.removeEventListener('webkitbeginfullscreen', webkitbeginfullscreenHandler, false);
     };
 
     function progressHandler() {
       if( !initialized ) {
         console.log('4. progressHandler ', _videoEl.currentTime);
         _videoEl.addEventListener('seeked', seekedHander);
-        _videoEl.pause();
+        // _videoEl.pause();
         _videoEl.currentTime = 1 / self.fps * _frameIndex;
         _videoEl.removeEventListener('progress', progressHandler, false);
         initialized = true;
@@ -137,12 +144,13 @@ Sugr.imageplayer = (function() {
     function seekedHander() {
       console.log('5. seekedHander: ', _videoEl.currentTime);
       console.log('5.1 Buffered: ', _videoEl.buffered.start(_videoEl.buffered.length - 1), _videoEl.buffered.end(_videoEl.buffered.length - 1));
-      _videoEl.addEventListener('canplaythrough', canplaythroughSeeked, false);
       _videoEl.play();
+      _videoEl.addEventListener('canplaythrough', canplaythroughSeeked, false);
       _videoEl.removeEventListener('seeked', seekedHander, false);
     };
 
     function canplaythroughSeeked() {
+      console.log('6. canplaythroughSeeked: ', _videoEl.currentTime);
       _videoEl.play();
       _videoEl.removeEventListener('canplaythrough', canplaythroughSeeked, false);
     };
