@@ -102,7 +102,7 @@ Sugr.imageplayer = (function() {
       frameIndexOnInitialPlay = frameIndexOnInitialPlay || _frameIndex;
       timeStampOnInitialPlay = timeStampOnInitialPlay || event.timeStamp;
       console.log(frameIndexOnInitialPlay, timeStampOnInitialPlay);
-      _videoEl.pause();
+      // _videoEl.pause();
       if( !clicked ) {
         clicked = clicked || true;
         console.log('2. play: ', _videoEl.currentTime);
