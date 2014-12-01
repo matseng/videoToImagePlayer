@@ -277,7 +277,7 @@ Sugr.imageplayer = (function() {
   var scriptURL = _getScriptURL();
   var queryObj = _queryStringToObject(scriptURL);
   var im = new Sugr.imageplayer(queryObj.url, queryObj.fps, queryObj.width);
-  window.parent._setContainer(im);
+  window.parent._setContainer(im);  //
   im.autoplay();
 
   function _getScriptURL() {
