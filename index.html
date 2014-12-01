@@ -19,6 +19,17 @@
     console.log(typeof document.getElementById('video-container'));
     var ip = new Sugr.imageplayer('data/base64ImagesMySpace', 23, 320, document.getElementById('video-container'));
 
+    ip.addEventListener('play', function() {
+      console.log("EVENT: I'm playing");
+    });
+
+    ip.addEventListener('pause', function() {
+      console.log("EVENT: I'm paused");
+    });
+
+    ip.autoplay();
+
+
     document.getElementById('pause').addEventListener('click', function() {
       ip.pause();
     });

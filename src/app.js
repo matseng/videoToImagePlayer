@@ -64,6 +64,7 @@ var Sugr = Sugr || {};
 Sugr.imageplayer = (function() {
 
   var _imagesArray, _imagesArrayType, _frameIndex = 0, _containerEl, _videoEl, _imageEl, _pause, _bufferPause, _timerStart;
+  var _notification = new Sugr._notification();
 
   function _split(rawTextData) {
     return rawTextData.split('\n')
@@ -74,11 +75,11 @@ Sugr.imageplayer = (function() {
   };
 
   function _play() {
+    _notification.publish('play');
     if (window.performance && _timerStart) console.log(window.performance.now() - _timerStart);
     if( !_imageEl) {
       _appendImageElement.call(this);
-    }
-    
+    }    
     if(_frameIndex >= _imagesArray.length) _frameIndex = _imagesArray.length - 1;
 
     function render() {
@@ -89,6 +90,7 @@ Sugr.imageplayer = (function() {
         return;
       }
       if( _pause ) {
+        _notification.publish('pause');
         return;
       }
 
@@ -320,7 +322,6 @@ Sugr.imageplayer = (function() {
     this.frameCount = frameCount;
     this.width =  width;
     this.setContainer(containerEl);
-    this.autoplay();
   };
 
   ImagePlayer.prototype = {
@@ -333,6 +334,10 @@ Sugr.imageplayer = (function() {
       _containerEl = containerEl;
       if(_containerEl.style.position === "") _containerEl.style.position = 'relative'
       _videoEl = containerEl.getElementsByTagName('video')[0];
+    },
+
+    addEventListener: function(eventName, callback, context, arg1, arg2, arg3) {
+      _notification.subscribe.apply(_notification, Array.prototype.slice.call(arguments, 0));
     },
 
     play: function() {
