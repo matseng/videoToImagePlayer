@@ -93,8 +93,8 @@ Sugr.imageplayer = (function() {
       if( !clicked ) {
         clicked = clicked || true;
         console.log('2. play: ', _videoEl.currentTime);
-        // _videoEl.addEventListener('canplaythrough', canplaythroughHandler, false);
-        _videoEl.addEventListener('canplay', canplaythroughHandler, false);
+        _videoEl.addEventListener('canplaythrough', canplaythroughHandler, false);
+        // _videoEl.addEventListener('canplay', canplaythroughHandler, false);
       } else {
         canplaythroughHandler();
         progressHandler();
@@ -106,8 +106,8 @@ Sugr.imageplayer = (function() {
       console.log('4. canplaythroughHandler', _videoEl.currentTime);
       _videoEl.addEventListener('progress', progressHandler, false);
       _videoEl.addEventListener('webkitendfullscreen', webkitendfullscreenHandler, false);
-      // _videoEl.removeEventListener('canplaythrough', canplaythroughHandler, false);
-      _videoEl.removeEventListener('canplay', canplaythroughHandler, false);
+      _videoEl.removeEventListener('canplaythrough', canplaythroughHandler, false);
+      // _videoEl.removeEventListener('canplay', canplaythroughHandler, false);
     };
 
     function progressHandler() {
