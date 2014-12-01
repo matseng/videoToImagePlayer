@@ -15,6 +15,52 @@
 
 var Sugr = Sugr || {};
 
+if(typeof Sugr._notification === typeof void 0) Sugr._notification = (function() {
+
+  function Notification() {
+    this._events = {};
+  };
+
+  Notification.prototype.publish = function(eventName, argX, argY, argZ) {  //argX,Y,Z replaced by arguments below to capture additional arguments, which are concatenated to the arguments array from subscribe method
+    if( !this._events[eventName] ) return false;
+    var subscribers = this._events[eventName];
+    var iterCallback, iterContext;
+    for(var i = 0; i < subscribers.length; i++) {
+      iterCallback = subscribers[i].callback;
+      iterContext = subscribers[i].context;
+      iterArguments = subscribers[i].arguments;
+      iterCallback.apply(iterContext, iterArguments.concat(Array.prototype.slice.call(arguments, 1)));
+    }
+  };
+
+  Notification.prototype.subscribe = function(eventName, callback, context, arg1, arg2, arg3) {  //arg1,2,3 replaced by arguments below to capture additional arguments (e.g. arg4, arg5, etc.)
+    context = context || null;
+    this._events[eventName] = this._events[eventName] || [];
+    this._events[eventName].push({
+      callback: callback,
+      context: context,
+      arguments: Array.prototype.slice.call(arguments, 3) || []
+    });
+  };
+
+  Notification.prototype.unsubscribe = function(eventName, callback) {
+    var removedCallback;
+    var subscribers = this._events[eventName];
+    if( !subscribers ) return false;
+    for(var i = 0; i < subscribers.length; i++) {
+      if( subscribers[i].callback === callback ) {
+        removedCallback = subscribers.splice(i, 1);
+        // console.log('Unsubscribed to: ', removedCallback[0]);
+      }
+    }
+  };
+
+  //return new Notification();
+  return Notification;
+})();
+
+var Sugr = Sugr || {};
+
 Sugr.imageplayer = (function() {
 
   var _imagesArray, _imagesArrayType, _frameIndex = 0, _containerEl, _videoEl, _imageEl, _toggle, _paused, _timerStart;
