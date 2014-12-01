@@ -13,7 +13,8 @@
   <script src='src/app.js'></script>
 
   <script>
-    new Sugr.imageplayer('data/base64ImagesMySpace', 23, 320, null, document.getElementById('video-container'));
+    console.log(typeof document.getElementById('video-container'));
+    new Sugr.imageplayer('data/base64ImagesMySpace', 23, 320, document.getElementById('video-container'));
   </script>
 
 

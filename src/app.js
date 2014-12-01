@@ -1,4 +1,20 @@
+/**
+* Image player for playing a series jpegs stored as base64 string
+*
+* @example: new Sugr.imageplayer('data/base64ImagesMySpace', 23, 320, document.getElementById('video-container'));
+*
+* @param {string} url  The url of base64 string of images
+* @param {number} fps  Frames per second
+* @param {number} width  Width in pixels
+* @param {element} containerEl  HTML PARENT element of <video> tag
+* @param {number} frameCount  (OPTIONAL) Total number of frames
+*
+* @notes: Initial video does not have sound
+* Optimized for iOS 7.1 and later
+*/
+
 var Sugr = Sugr || {};
+
 Sugr.imageplayer = (function() {
 
   var _imagesArray, _imagesArrayType, _frameIndex = 0, _containerEl, _videoEl, _imageEl, _toggle, _paused, _timerStart;
@@ -90,8 +106,8 @@ Sugr.imageplayer = (function() {
       if( !clicked ) {
         clicked = clicked || true;
         console.log('2. play: ', _videoEl.currentTime);
-        _videoEl.addEventListener('canplaythrough', canplaythroughHandler, false);
-        // _videoEl.addEventListener('canplay', canplayHandler, false);
+        // _videoEl.addEventListener('canplaythrough', canplaythroughHandler, false);
+        _videoEl.addEventListener('canplay', canplaythroughHandler, false);
       } else {
         canplaythroughHandler();
         progressHandler();
@@ -104,8 +120,8 @@ Sugr.imageplayer = (function() {
       _videoEl.addEventListener('progress', progressHandler, false);
       _videoEl.addEventListener('webkitendfullscreen', webkitendfullscreenHandler, false);
       _videoEl.pause();
-      _videoEl.removeEventListener('canplaythrough', canplaythroughHandler, false);
-      // _videoEl.removeEventListener('canplay', canplayHandler, false);
+      // _videoEl.removeEventListener('canplaythrough', canplaythroughHandler, false);
+      _videoEl.removeEventListener('canplay', canplaythroughHandler, false);
     };
 
     function progressHandler() {
@@ -244,7 +260,7 @@ Sugr.imageplayer = (function() {
     };
   };
 
-  var ImagePlayer = function(url, fps, width, frameCount, containerEl) {
+  var ImagePlayer = function(url, fps, width, containerEl, frameCount) {
     this.url = url;
     this.fps = fps;
     this.frameCount = frameCount;
