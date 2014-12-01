@@ -93,7 +93,8 @@ Sugr.imageplayer = (function() {
       if( !clicked ) {
         clicked = clicked || true;
         console.log('2. play: ', _videoEl.currentTime);
-        _videoEl.addEventListener('canplaythrough', canplaythroughHandler, false);
+        // _videoEl.addEventListener('canplaythrough', canplaythroughHandler, false);
+        _videoEl.addEventListener('canplay', canplaythroughHandler, false);
       } else {
         canplaythroughHandler();
         progressHandler();
@@ -105,18 +106,31 @@ Sugr.imageplayer = (function() {
       console.log('4. canplaythroughHandler', _videoEl.currentTime);
       _videoEl.addEventListener('progress', progressHandler, false);
       _videoEl.addEventListener('webkitendfullscreen', webkitendfullscreenHandler, false);
-      _videoEl.removeEventListener('canplaythrough', canplaythroughHandler, false);
+      // _videoEl.removeEventListener('canplaythrough', canplaythroughHandler, false);
+      _videoEl.removeEventListener('canplay', canplaythroughHandler, false);
     };
 
     function progressHandler() {
       if( !initialized ) {
         console.log('5. progressHandler ', _videoEl.currentTime);
+        _videoEl.addEventListener('seeked', seekedHander);
+
         initialized = true;
         _videoEl.currentTime = 1 / self.fps * _frameIndex;
-        _videoEl.play();
+        // _videoEl.play();
         _videoEl.removeEventListener('progress', progressHandler, false);
 
       }
+
+      function seekedHander() {
+        console.log('6. seekedHander: ', _videoEl.currentTime);
+        console.log('6.1 Buffered: ', _videoEl.buffered.start(_videoEl.buffered.length - 1), _videoEl.buffered.end(_videoEl.buffered.length - 1));
+        _videoEl.play();
+        _videoEl.removeEventListener('seeked', seekedHander, false);
+      };
+
+
+
       // if (_imagesArrayType === 'base64') _imageEl.src = "data:image/jpeg;base64," + _imagesArray[_imagesArray.length - 1];
       // if (_imagesArrayType === 'url') _imageEl.src = _imagesArray[_imagesArray.length - 1];
     };
