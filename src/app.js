@@ -119,7 +119,7 @@ Sugr.imageplayer = (function() {
       console.log('3. canplayHandler', _videoEl.currentTime);
       _videoEl.addEventListener('progress', progressHandler, false);
       _videoEl.addEventListener('webkitendfullscreen', webkitendfullscreenHandler, false);
-      // _videoEl.pause();
+      _videoEl.pause();
       _videoEl.removeEventListener('canplaythrough', canplaythroughHandler, false);
       // _videoEl.removeEventListener('canplay', canplaythroughHandler, false);
     };
@@ -138,17 +138,6 @@ Sugr.imageplayer = (function() {
       console.log('5. seekedHander: ', _videoEl.currentTime);
       console.log('5.1 Buffered: ', _videoEl.buffered.start(_videoEl.buffered.length - 1), _videoEl.buffered.end(_videoEl.buffered.length - 1));
       _videoEl.addEventListener('canplaythrough', canplaythroughSeeked, false);
-      _videoEl.play();
-      _videoEl.play();
-      _videoEl.play();
-      _videoEl.play();
-      _videoEl.play();
-      _videoEl.play();
-      _videoEl.play();
-      _videoEl.play();
-      _videoEl.play();
-      _videoEl.play();
-      _videoEl.play();
       _videoEl.play();
       _videoEl.removeEventListener('seeked', seekedHander, false);
     };
