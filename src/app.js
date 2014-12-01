@@ -63,7 +63,7 @@ var Sugr = Sugr || {};
 
 Sugr.imageplayer = (function() {
 
-  var _imagesArray, _imagesArrayType, _frameIndex = 0, _containerEl, _videoEl, _imageEl, _toggle, _paused, _timerStart;
+  var _imagesArray, _imagesArrayType, _frameIndex = 0, _containerEl, _videoEl, _imageEl, _pause, _bufferPause, _timerStart;
 
   function _split(rawTextData) {
     return rawTextData.split('\n')
@@ -84,11 +84,11 @@ Sugr.imageplayer = (function() {
     function render() {
       if ( this.frameCount && _frameIndex >= this.frameCount ) return;
       if ( !this.frameCount && _frameIndex === _imagesArray.length ) {
-        _paused = true;
+        _bufferPause = true;
         console.log("PAUSED to buffer download");
         return;
       }
-      if( _toggle ) {
+      if( _pause ) {
         return;
       }
 
@@ -131,7 +131,7 @@ Sugr.imageplayer = (function() {
   var timeStampOnInitialPlay;
   function _onclick() {
     console.log("1. ONCLICK", _videoEl.currentTime);
-    _toggle = true;
+    _pause = true;
     var self = this;
     initialized = false;
     loading.display();
@@ -206,7 +206,7 @@ Sugr.imageplayer = (function() {
       loading.remove();
       _frameIndex = frameIndexOnInitialPlay + Math.round(self.fps * (event.timeStamp - timeStampOnInitialPlay) / 1000);
       console.log(_frameIndex);
-      _toggle = false;
+      _pause = false;
       _play.call(self);
       _videoEl.removeEventListener('webkitendfullscreen', webkitendfullscreenHandler, false);
 
@@ -304,8 +304,8 @@ Sugr.imageplayer = (function() {
         }
         remainder = partialArrBase64[partialArrBase64.length - 1];
         start = end;
-        if(chunkIndex === 0 || _paused) {
-          _paused = false;
+        if(chunkIndex === 0 || _bufferPause) {
+          _bufferPause = false;
           _play.call(this);
         }
         chunkIndex++;
@@ -334,6 +334,15 @@ Sugr.imageplayer = (function() {
       if(_containerEl.style.position === "") _containerEl.style.position = 'relative'
       _videoEl = containerEl.getElementsByTagName('video')[0];
     },
+
+    play: function() {
+      _pause = false;
+      _play.call(this);
+    },
+
+    pause: function() {
+      _pause = true;
+    }
   };
 
   return ImagePlayer;

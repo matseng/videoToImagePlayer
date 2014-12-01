@@ -10,11 +10,23 @@
     <video src='http://vindicoass1.edgesuite.net/Repository/CampaignCreative/Campaign_12906/INSTREAMAD/Myspace_15s_Final_MP4_16x9_720p.mp4' width="1px" height="1px"></video>
   </div>
 
+  <button id='pause'>Pause</button>
+  <button id='play'>Play</button>
+
   <script src='src/app.js'></script>
 
   <script>
     console.log(typeof document.getElementById('video-container'));
-    new Sugr.imageplayer('data/base64ImagesMySpace', 23, 320, document.getElementById('video-container'));
+    var ip = new Sugr.imageplayer('data/base64ImagesMySpace', 23, 320, document.getElementById('video-container'));
+
+    document.getElementById('pause').addEventListener('click', function() {
+      ip.pause();
+    });
+
+    document.getElementById('play').addEventListener('click', function() {
+      ip.play();
+    });
+
   </script>
 
 
