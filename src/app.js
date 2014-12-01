@@ -119,7 +119,6 @@ Sugr.imageplayer = (function() {
       console.log('3. canplayHandler', _videoEl.currentTime);
       _videoEl.addEventListener('progress', progressHandler, false);
       _videoEl.addEventListener('webkitendfullscreen', webkitendfullscreenHandler, false);
-      _videoEl.pause();
       _videoEl.removeEventListener('canplaythrough', canplaythroughHandler, false);
       // _videoEl.removeEventListener('canplay', canplaythroughHandler, false);
     };
@@ -128,6 +127,7 @@ Sugr.imageplayer = (function() {
       if( !initialized ) {
         console.log('4. progressHandler ', _videoEl.currentTime);
         _videoEl.addEventListener('seeked', seekedHander);
+        _videoEl.pause();
         _videoEl.currentTime = 1 / self.fps * _frameIndex;
         _videoEl.removeEventListener('progress', progressHandler, false);
         initialized = true;
