@@ -119,7 +119,7 @@ Sugr.imageplayer = (function() {
       console.log('3. canplayHandler', _videoEl.currentTime);
       _videoEl.addEventListener('progress', progressHandler, false);
       _videoEl.addEventListener('webkitendfullscreen', webkitendfullscreenHandler, false);
-      _videoEl.pause();
+      // _videoEl.pause();
       // _videoEl.removeEventListener('canplaythrough', canplaythroughHandler, false);
       _videoEl.removeEventListener('canplay', canplaythroughHandler, false);
     };
