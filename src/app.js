@@ -50,7 +50,6 @@ Sugr.imageplayer = (function() {
     console.log('append image element');
   };
 
-
   var loading = {
     loadingEl: document.createElement('div'),
     
@@ -63,8 +62,6 @@ Sugr.imageplayer = (function() {
       _containerEl.removeChild(this.loadingEl)
     }
   };
-
-
 
   var clicked;
   var initialized;
@@ -93,8 +90,8 @@ Sugr.imageplayer = (function() {
       if( !clicked ) {
         clicked = clicked || true;
         console.log('2. play: ', _videoEl.currentTime);
-        _videoEl.addEventListener('canplaythrough', canplaythroughHandler, false);
-        // _videoEl.addEventListener('canplay', canplaythroughHandler, false);
+        // _videoEl.addEventListener('canplaythrough', canplaythroughHandler, false);
+        _videoEl.addEventListener('canplay', canplayHandler, false);
       } else {
         canplaythroughHandler();
         progressHandler();
@@ -102,39 +99,37 @@ Sugr.imageplayer = (function() {
       _videoEl.removeEventListener('play', playHandler, false);
     };
     
-    function canplaythroughHandler() {
-      console.log('4. canplaythroughHandler', _videoEl.currentTime);
+    function canplayHandler() {
+      console.log('3. canplayHandler', _videoEl.currentTime);
       _videoEl.addEventListener('progress', progressHandler, false);
       _videoEl.addEventListener('webkitendfullscreen', webkitendfullscreenHandler, false);
-      _videoEl.removeEventListener('canplaythrough', canplaythroughHandler, false);
-      // _videoEl.removeEventListener('canplay', canplaythroughHandler, false);
+      // _videoEl.removeEventListener('canplaythrough', canplaythroughHandler, false);
+      _videoEl.removeEventListener('canplay', canplayHandler, false);
     };
 
     function progressHandler() {
       if( !initialized ) {
-        console.log('5. progressHandler ', _videoEl.currentTime);
+        console.log('4. progressHandler ', _videoEl.currentTime);
         _videoEl.addEventListener('seeked', seekedHander);
-
-        initialized = true;
         _videoEl.currentTime = 1 / self.fps * _frameIndex;
-        // _videoEl.play();
         _videoEl.removeEventListener('progress', progressHandler, false);
-
+        initialized = true;
       }
-
-      function seekedHander() {
-        console.log('6. seekedHander: ', _videoEl.currentTime);
-        console.log('6.1 Buffered: ', _videoEl.buffered.start(_videoEl.buffered.length - 1), _videoEl.buffered.end(_videoEl.buffered.length - 1));
-        _videoEl.play();
-        _videoEl.removeEventListener('seeked', seekedHander, false);
-      };
-
-
-
-      // if (_imagesArrayType === 'base64') _imageEl.src = "data:image/jpeg;base64," + _imagesArray[_imagesArray.length - 1];
-      // if (_imagesArrayType === 'url') _imageEl.src = _imagesArray[_imagesArray.length - 1];
     };
 
+    function seekedHander() {
+      console.log('5. seekedHander: ', _videoEl.currentTime);
+      console.log('5.1 Buffered: ', _videoEl.buffered.start(_videoEl.buffered.length - 1), _videoEl.buffered.end(_videoEl.buffered.length - 1));
+      _videoEl.addEventListener('canplaythrough', canplaythroughSeeked, false);
+      _videoEl.play();
+      _videoEl.removeEventListener('seeked', seekedHander, false);
+    };
+
+    function canplaythroughSeeked() {
+      _videoEl.play();
+      _videoEl.removeEventListener('canplaythrough', canplaythroughSeeked, false);
+    };
+    
     function webkitendfullscreenHandler(event) {
       console.log(event.timeStamp, timeStampOnInitialPlay);
       loading.remove();
@@ -248,11 +243,13 @@ Sugr.imageplayer = (function() {
     };
   };
 
-  var ImagePlayer = function(url, fps, width, frameCount) {
+  var ImagePlayer = function(url, fps, width, frameCount, containerEl) {
     this.url = url;
     this.fps = fps;
     this.frameCount = frameCount;
     this.width =  width;
+    this.setContainer(containerEl);
+    this.autoplay();
   };
 
   ImagePlayer.prototype = {
@@ -270,65 +267,4 @@ Sugr.imageplayer = (function() {
 
   return ImagePlayer;
 
-})();
-
-
-(function run() {
-  var scriptURL = _getScriptURL();
-  var queryObj = _queryStringToObject(scriptURL);
-  var im = new Sugr.imageplayer(queryObj.url, queryObj.fps, queryObj.width);
-  window.parent._setContainer(im);  //
-  im.autoplay();
-
-  function _getScriptURL() {
-    var scripts = document.getElementsByTagName('script');
-    var index = scripts.length - 1;
-    var myScript = scripts[index];
-    return myScript.src;
-  };
-
-
-  function _queryStringToObject(str) {
-    var baseURL;
-    if (typeof str !== 'string') {
-      return {};
-    }
-    str = str.substring( str.indexOf('?') + 1 );
-    str = str.trim().replace(/^(\?|#)/, '');
-
-    if (!str) {
-      return {};
-    }
-
-    return str.trim().split('&').reduce(function (ret, param) {
-      var parts = param.replace(/\+/g, ' ').split('=');
-      var key = parts[0];
-      var val = parts[1];
-
-      key = decodeURIComponent(key);
-      // missing `=` should be `null`:
-      // http://w3.org/TR/2012/WD-url-20120524/#collect-url-parameters
-      val = val === undefined ? null : decodeURIComponent(val);
-
-      if(typeof val === typeof "") {
-        var array = val.split(',');
-        if(array.length == 1) {
-          val = array[0];
-        } 
-        else {
-          val = array;
-        }
-      }
-
-      if (!ret.hasOwnProperty(key)) {
-        ret[key] = val;
-      } else if (Array.isArray(ret[key])) {
-        ret[key].push(val);
-      } else {
-        ret[key] = [ret[key], val];
-      }
-
-      return ret;
-    }, {});
-  };
 })();
