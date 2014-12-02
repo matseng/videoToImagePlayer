@@ -9,6 +9,12 @@
 * @param {element} containerEl  HTML PARENT element of <video> tag
 * @param {number} frameCount  (OPTIONAL) Total number of frames
 *
+* Public methods:
+* @method autoplay()
+* @method play()
+* @method pause()
+* @method addEventListener({string} eventName, callback, arg1, arg2, etc.)
+*   eventName supports: playing, play, pause, timeupdate
 * @notes: Initial video does not have sound
 * Optimized for iOS 7.1 and later
 */
@@ -75,12 +81,14 @@ Sugr.imageplayer = (function() {
   };
 
   function _play() {
-    _notification.publish('play');
     if (window.performance && _timerStart) console.log(window.performance.now() - _timerStart);
     if( !_imageEl) {
+      _notification.publish('playing');
       _appendImageElement.call(this);
     }    
     if(_frameIndex >= _imagesArray.length) _frameIndex = _imagesArray.length - 1;
+
+    _notification.publish('play');
 
     function render() {
       if ( this.frameCount && _frameIndex >= this.frameCount ) return;
@@ -99,6 +107,7 @@ Sugr.imageplayer = (function() {
         window.requestAnimationFrame(render.bind(this));
       }.bind(this), 1000 / this.fps);
       if(_frameIndex >= _imagesArray.length) _frameIndex = _imagesArray.length - 1;
+      _notification.publish('timeupdate', 1 / this.fps * _frameIndex );
       if (_imagesArrayType === 'base64') _imageEl.src = "data:image/jpeg;base64," + _imagesArray[_frameIndex];
       if (_imagesArrayType === 'url') _imageEl.src = _imagesArray[_frameIndex];
     };    

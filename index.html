@@ -17,25 +17,32 @@
 
   <script>
     console.log(typeof document.getElementById('video-container'));
-    var ip = new Sugr.imageplayer('data/base64ImagesMySpace', 23, 320, document.getElementById('video-container'));
+    var player = new Sugr.imageplayer('data/base64ImagesMySpace', 23, 320, document.getElementById('video-container'));
 
-    ip.addEventListener('play', function() {
-      console.log("EVENT: I'm playing");
+    player.addEventListener('playing', function() {
+      console.log("EVENT: I'm playing (singleton)");
     });
 
-    ip.addEventListener('pause', function() {
-      console.log("EVENT: I'm paused");
+    player.addEventListener('play', function() {
+      console.log("EVENT: play");
     });
 
-    ip.autoplay();
+    player.addEventListener('pause', function() {
+      console.log("EVENT: pause");
+    });
 
+    player.addEventListener('timeupdate', function(time) {
+      if(Math.round(time) === time) console.log('EVENT: time: ', time);
+    })
+
+    player.autoplay();
 
     document.getElementById('pause').addEventListener('click', function() {
-      ip.pause();
+      player.pause();
     });
 
     document.getElementById('play').addEventListener('click', function() {
-      ip.play();
+      player.play();
     });
 
   </script>
