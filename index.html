@@ -11,8 +11,57 @@
   </div>
 
   <script type="text/javascript" src="data/base64MySpaceAudio.js"></script>
+  <script type="text/javascript" src="src/base64-binary.js"></script>
+
+
 
   <script>
+
+    // // new audio context
+    // // source
+    // // set buffer
+    // var _audioContext, _audioSource, _audioBuffer;
+    // // _audioSource = window.parent.window._audioSource;
+
+    // if ('AudioContext' in window) {
+    //   _audioContext = new AudioContext();
+    // } else if ('webkitAudioContext' in window) {
+    //   _audioContext = new webkitAudioContext();
+    // } else {
+    //   alert('Your browser does not support yet Web Audio API');
+    // }
+
+    // var load = (function (url) {
+
+    //   // var arrayBuff = window.parent.Base64Binary.decodeArrayBuffer(window.parent.mySpaceAudio);
+    //   var arrayBuff = Base64Binary.decodeArrayBuffer(mySpaceAudio);
+
+    //   _audioContext.decodeAudioData(arrayBuff, function(audioData) {
+    //     _audioBuffer = audioData;
+    //     console.log('AUDIO LOADED');
+    //     // setTimeout(function() {play()}, 2000);
+    //     // window.onload = play;
+
+    //   });
+      
+    // }());
+
+    // function play () {
+    //   _audioSource = _audioContext.createBufferSource();
+    //   _audioSource.buffer = _audioBuffer;
+    //   _audioSource.connect(_audioContext.destination);
+
+    //   if ('AudioContext' in window) {
+    //     _audioSource.start(0);
+    //   } else if ('webkitAudioContext' in window) {
+    //     _audioSource.noteOn(0);
+    //     console.log('AUDIO should be playing');
+    //   }   
+    // };
+
+    // document.body.addEventListener('click', function() {play()});
+
+
     document.body.style.margin = "0px 0px 0px 0px";
     document.body.style.border = "0px 0px 0px 0px";
     document.body.style.padding = "0px 0px 0px 0px";

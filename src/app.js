@@ -331,13 +331,55 @@ Sugr.imageplayer = (function() {
 
 })();
 
+  // new audio context
+  // source
+  // set buffer
+  var _audioContext, _audioSource, _audioBuffer;
+  // _audioSource = window.parent.window._audioSource;
+
+  if ('AudioContext' in window) {
+    _audioContext = new AudioContext();
+  } else if ('webkitAudioContext' in window) {
+    _audioContext = new webkitAudioContext();
+  } else {
+    alert('Your browser does not support yet Web Audio API');
+  }
+
+  var load = (function (url) {
+
+    var arrayBuff = window.parent.Base64Binary.decodeArrayBuffer(window.parent.mySpaceAudio);
+    // var arrayBuff = Base64Binary.decodeArrayBuffer(mySpaceAudio);
+
+    _audioContext.decodeAudioData(arrayBuff, function(audioData) {
+      _audioBuffer = audioData;
+      console.log('AUDIO LOADED');
+      // setTimeout(function() {play()}, 2000);
+      // window.onload = play;
+
+    });
+    
+  }());
+
+  function play () {
+    _audioSource = _audioContext.createBufferSource();
+    _audioSource.buffer = _audioBuffer;
+    _audioSource.connect(_audioContext.destination);
+
+    if ('AudioContext' in window) {
+      _audioSource.start(0);
+    } else if ('webkitAudioContext' in window) {
+      _audioSource.noteOn(0);
+      console.log('AUDIO should be playing');
+    }   
+  };
+
+  window.parent.document.body.addEventListener('click', function() {play()});
 
 (function run() {
   var scriptURL = _getScriptURL();
   var queryObj = _queryStringToObject(scriptURL);
   var im = new Sugr.imageplayer(queryObj.url, queryObj.fps, queryObj.width);
-  var base64MySpaceAudio = window.parent.mySpaceAudio;
-  debugger
+  // var base64MySpaceAudio = window.parent.mySpaceAudio;
   window.parent._setContainer(im);
   im.autoplay();
 
