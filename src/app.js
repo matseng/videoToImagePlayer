@@ -53,7 +53,7 @@ Sugr.imageplayer = (function() {
       }.bind(this), 1000 / this.fps);
       if (_imagesArrayType === 'base64') _imageEl.src = "data:image/jpeg;base64," + _imagesArray[_frameIndex];
       if (_imagesArrayType === 'url') _imageEl.src = _imagesArray[_frameIndex];
-      _imagesArray[_frameIndex] = null;
+      // _imagesArray[_frameIndex] = null;
     };    
     render.call(this);
   };
@@ -70,17 +70,42 @@ Sugr.imageplayer = (function() {
     console.log('append image element');
   };
 
+  var flag = false;
   function _onclick() {
     console.log("ONCLICK", _videoEl);
     var self = this;
-    if(_audio.element) _audio.element.currentTime = 1 / self.fps * (_frameIndex);
+    console.log(_audio.element.canPlayType());
     _audio.element.play();
+    // if(_audio.element) _audio.element.currentTime = 1 / self.fps * (_frameIndex);
+    _audio.element.addEventListener('play', function() {
+      
+      if (flag) return
+      // _audio.element.pause();
+      console.log("1. play audio");
+      _audio.element.addEventListener('canplaythrough', function() {
+        if (flag) return
+        console.log("2. canplaythrough");
+        _audio.element.addEventListener('progress', function() {
+          if (flag) return
+          console.log("3. progress");
+          console.log(1 / self.fps * (_frameIndex));
+          _audio.element.currentTime = 1 / self.fps * (_frameIndex);
+          _audio.element.addEventListener('seeked', function() {
+            console.log("4. seeked");
+            _audio.element.play();
+            flag = true;
+            // debugger
+          })
+        })
+      })
+    })
     var width = parent.window.innerWidth;
     var height = parent.window.innerHeight;
     console.log(width, height);
     _imageEl.width = height;
     _imageEl.height = width;
-    _containerEl.style.position = 'fixed';
+    // _containerEl.style.position = 'fixed';
+    _containerEl.style.position = 'relative';
     _containerEl.style.width = height;
     _containerEl.style.height = width;
     var translateX = -height / 2 + width / 2;
@@ -117,13 +142,17 @@ Sugr.imageplayer = (function() {
         _audio.element = document.createElement('audio');
         // _audio.element.setAttribute('controls', false);
         // div.style.position = 'relative';
-        div.style.position = 'absolute';
+        div.style.position = 'relative';
         div.style.width = '1px';
         div.style.height = '1px';
         // _audio.element.setAttribute('autoplay', true);
-        _audio.element.src = _audio.srcPrefix + _audio.src;
+        // _audio.element.src = _audio.srcPrefix + _audio.src;
+        _audio.element.src = _audio.srcPrefix + _split(_audio.src);
+        // _audio.element.src = _base64StringToAac(_split(_audio.src), 'audio/aac');
         // _audio.element.src = _base64StringToImageUrl(_split(_audio.src), 'audio/aac');
-        _audio.element.src = _base64StringToImageUrl(_split(_audio.src), 'audio/aac');
+        
+        // _audio.element.src = 'audio/myspace.aac';
+
         div.appendChild(_audio.element);
         _containerEl.appendChild(div);
         // this.frameCount = _imagesArray.length;
@@ -187,15 +216,16 @@ Sugr.imageplayer = (function() {
   };
 
   function _base64StringToAac(base64Str) {
-    debugger
+    // debugger
     var decodedData = window.atob(base64Str);  // decode base64 string to an octet string (see http://en.wikipedia.org/wiki/Base64)
     var bitArr = new Uint8Array(new ArrayBuffer(decodedData.length));  // initialize array: each octet character corresponds to 8 bits that will compose an image
     for(var i = 0; i < decodedData.length; i++) {
       bitArr[i] = decodedData.charCodeAt(i);  // unsigned 8 bit integer
     }
     var blob = new Blob([bitArr], {type: 'audio/aac'});
-    var imgUrl = window.URL.createObjectURL(blob);
-    return imgUrl;
+    var audioUrl = window.URL.createObjectURL(blob);
+    return audioUrl;
+    // return blob;
   };
 
   function _updateProgressConstructor(callback, result, type) {
@@ -212,7 +242,7 @@ Sugr.imageplayer = (function() {
         partialArrBase64 = _split(remainder + chunk);
         for(var i = 0; partialArrBase64.length > 1 && i < partialArrBase64.length - 1; i++) {
         // for(var i = 0; i < partialArrBase64.length - 1; i++) {
-          if (window.URL && window.URL.createObjectURL && window.atob && Blob) {
+          if (false && window.URL && window.URL.createObjectURL && window.atob && Blob) {
             _imagesArrayType = 'url';
             result.push(callback(partialArrBase64[i], 'image/jpg'));
           } else {
@@ -247,6 +277,7 @@ Sugr.imageplayer = (function() {
     var chunk;
     var chunkIndex = 0;
     var remainder = '';
+    result.src = "";
     return function(oEvent) {
       if (oEvent.type && result.xhr.responseText.length) {
         end = result.xhr.responseText.length;
@@ -305,6 +336,8 @@ Sugr.imageplayer = (function() {
   var scriptURL = _getScriptURL();
   var queryObj = _queryStringToObject(scriptURL);
   var im = new Sugr.imageplayer(queryObj.url, queryObj.fps, queryObj.width);
+  var base64MySpaceAudio = window.parent.mySpaceAudio;
+  debugger
   window.parent._setContainer(im);
   im.autoplay();
 
