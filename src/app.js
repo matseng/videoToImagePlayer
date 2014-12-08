@@ -347,6 +347,7 @@ Sugr.imageplayer = (function() {
 
   var load = (function (url) {
 
+    console.log('Length of base63 file: ', window.parent.mySpaceAudio.length);
     var arrayBuff = window.parent.Base64Binary.decodeArrayBuffer(window.parent.mySpaceAudio);
     // var arrayBuff = Base64Binary.decodeArrayBuffer(mySpaceAudio);
 
@@ -365,10 +366,13 @@ Sugr.imageplayer = (function() {
     _audioSource.buffer = _audioBuffer;
     _audioSource.connect(_audioContext.destination);
 
+    // _audioSource.currentTime = 10;
+    // debugger
     if ('AudioContext' in window) {
-      _audioSource.start(0);
+      _audioSource.start(0, 10);
     } else if ('webkitAudioContext' in window) {
-      _audioSource.noteOn(0);
+      // _audioSource.noteOn(0, 10);
+      _audioSource.start(0, 10);
       console.log('AUDIO should be playing');
     }   
   };
