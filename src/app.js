@@ -41,14 +41,17 @@ Sugr.imageplayer = (function() {
         expectedFrameIndex = Math.round(this.fps * (_audio.source.context.currentTime + _audio.offset));
         console.log('actual vs expecte frame index: ', _frameIndex, expectedFrameIndex);
         if (expectedFrameIndex > _frameIndex) {
-          console.log(expectedFrameIndex, _frameIndex);
           _frameIndex = expectedFrameIndex;
+          if (_frameIndex >= _imagesArray.length) {
+            _frameIndex = _imagesArray.length - 1;
+          }
         }
       }
       if (this.frameCount && _frameIndex >= this.frameCount) {
         return;
       }
 
+      if(_audio.source && Math.floor(_audio.source.context.currentTime + _audio.offset) > Math.floor(_audio.source.buffer.duration) ) return;
 
       setTimeout(function() {
         _frameIndex++;
@@ -259,21 +262,25 @@ Sugr.imageplayer = (function() {
             result.push(partialArrBase64[i]);
           }
         }
-        if(chunkIndex === 0 || ( _paused && result.length % this.fps === 0 )) {
+        // if(chunkIndex === 0 || ( _paused && result.length % this.fps === 0 )) {
+        if( chunkIndex === 0 || ( _paused) ) {
         // if(chunkIndex === 0 || (_paused && partialArrBase64.length > 23)) {
           // console.log(partialArrBase64.length);
           _paused = false;
           _play.call(this);
         }
-        if(partialArrBase64.length > 1) {
-        // if(partialArrBase64.length > 2) {
-          remainder = partialArrBase64[partialArrBase64.length - 1];
-          start = end;
-          chunkIndex++;
-        } else {
-          console.log(partialArrBase64.length);
-          // remainder = remainder + chunk;
-        }
+        // if(partialArrBase64.length > 1) {
+        //   remainder = partialArrBase64[partialArrBase64.length - 1];
+        //   start = end;
+        //   chunkIndex++;
+        // } else {
+        //   // console.log(partialArrBase64.length);
+        //   console.log(chunk.length);
+        //   // remainder = remainder + chunk;
+        // }
+        remainder = partialArrBase64[partialArrBase64.length - 1];
+        start = end;
+        chunkIndex++;
         partialArrBase64 = null;
       }
     };
