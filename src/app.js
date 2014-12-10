@@ -394,7 +394,9 @@ Sugr.imageplayer = (function() {
 
   // window.parent.document.body.addEventListener('click', function() {play()});
 
-(function run() {
+window.onload = run;
+
+function run() {
   var scriptURL = _getScriptURL();
   var queryObj = _queryStringToObject(scriptURL);
   var im = new Sugr.imageplayer(queryObj.url, queryObj.fps, queryObj.width);
@@ -454,4 +456,4 @@ Sugr.imageplayer = (function() {
       return ret;
     }, {});
   };
-})();
+};
