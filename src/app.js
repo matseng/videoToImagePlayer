@@ -49,12 +49,12 @@ Sugr.imageplayer = (function() {
         return;
       }
 
-      if(_frameIndex === _imagesArray.length) return;
 
       setTimeout(function() {
         _frameIndex++;
         window.requestAnimationFrame(render.bind(this));
       }.bind(this), 1000 / this.fps);
+      if(_frameIndex === _imagesArray.length) return;
       if (_imagesArrayType === 'base64') _imageEl.src = "data:image/jpeg;base64," + _imagesArray[_frameIndex];
       if (_imagesArrayType === 'url') _imageEl.src = _imagesArray[_frameIndex];
       // _imagesArray[_frameIndex] = null;
