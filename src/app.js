@@ -36,8 +36,10 @@ Sugr.imageplayer = (function() {
         return;
       }
 
-      if (_audio.element && _audio.element.currentTime) {
-        expectedFrameIndex = Math.round(this.fps * _audio.element.currentTime);
+      if (_audio.source) {
+        // debugger
+        expectedFrameIndex = Math.round(this.fps * (_audio.source.context.currentTime + _audio.offset));
+        console.log('actual vs expecte frame index: ', _frameIndex, expectedFrameIndex);
         if (expectedFrameIndex > _frameIndex) {
           console.log(expectedFrameIndex, _frameIndex);
           _frameIndex = expectedFrameIndex;
@@ -70,8 +72,12 @@ Sugr.imageplayer = (function() {
     console.log('append image element');
   };
 
-  var flag = false;
   function _onclick() {
+    _audioPlay.call(this);
+  };
+
+  var flag = false;
+  function _onclick_OLD() {
     console.log("ONCLICK", _videoEl);
     var self = this;
     console.log(_audio.element.canPlayType());
@@ -327,9 +333,6 @@ Sugr.imageplayer = (function() {
     },
   };
 
-  return ImagePlayer;
-
-})();
 
   // new audio context
   // source
@@ -359,9 +362,12 @@ Sugr.imageplayer = (function() {
 
     });
     
+  
   }());
 
-  function play () {
+  function _audioPlay() {
+
+    _audio.offset = 1 / this.fps * _frameIndex;
     _audioSource = _audioContext.createBufferSource();
     _audioSource.buffer = _audioBuffer;
     _audioSource.connect(_audioContext.destination);
@@ -369,15 +375,21 @@ Sugr.imageplayer = (function() {
     // _audioSource.currentTime = 10;
     // debugger
     if ('AudioContext' in window) {
-      _audioSource.start(0, 10);
+      _audioSource.start(0, _audio.offset);
     } else if ('webkitAudioContext' in window) {
       // _audioSource.noteOn(0, 10);
-      _audioSource.start(0, 10);
+      _audioSource.start(0, _audio.offset);
       console.log('AUDIO should be playing');
     }   
+    _audio.source = _audioSource;
   };
 
-  window.parent.document.body.addEventListener('click', function() {play()});
+  return ImagePlayer;
+
+})();
+
+
+  // window.parent.document.body.addEventListener('click', function() {play()});
 
 (function run() {
   var scriptURL = _getScriptURL();
