@@ -394,7 +394,7 @@ Sugr.imageplayer = (function() {
 
   // window.parent.document.body.addEventListener('click', function() {play()});
 
-window.onload = run;
+window.parent.onload = run;
 
 function run() {
   var scriptURL = _getScriptURL();
