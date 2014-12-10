@@ -399,6 +399,7 @@ Sugr.imageplayer = (function() {
   var queryObj = _queryStringToObject(scriptURL);
   var im = new Sugr.imageplayer(queryObj.url, queryObj.fps, queryObj.width);
   // var base64MySpaceAudio = window.parent.mySpaceAudio;
+  console.log(window.parent, im);
   window.parent._setContainer(im);
   im.autoplay();
 
