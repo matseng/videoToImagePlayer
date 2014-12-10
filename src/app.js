@@ -49,6 +49,8 @@ Sugr.imageplayer = (function() {
         return;
       }
 
+      if(_frameIndex === _imagesArray.length) return;
+
       setTimeout(function() {
         _frameIndex++;
         window.requestAnimationFrame(render.bind(this));
