@@ -6,3 +6,4 @@ videos/*.jpeg
 data/*
 !data/base64ImagesMySpace
 !data/base64MySpaceAudio
+!base64MySpaceAudio.js
